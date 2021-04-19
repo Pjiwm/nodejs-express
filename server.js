@@ -13,6 +13,6 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify(result))
 })
 
-server.listen(port, '127.0.0.1', () => {
-    console.log(`Server running at http://${'127.0.0.1'}:${port}/`)
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}/`)
 })
