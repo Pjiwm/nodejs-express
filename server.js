@@ -8,8 +8,8 @@ app.get('/', (req, res) => {
 
 
     let result = {
-        "response": "hi",
-        "status": "ok",
+        "response": "hi 2 ",
+        "status": "ok 2",
     }
 
 app.listen(port, () => {
