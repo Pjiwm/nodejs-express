@@ -2,15 +2,18 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
 
+let result = {
+    "response": "hi 2 ",
+    "status": "ok 2",
+}
+
+
 app.get('/', (req, res) => {
-    res.status(200).json('Helllo world!').end()
+    res.status(200).json(result).end()
 })
 
 
-    let result = {
-        "response": "hi 2 ",
-        "status": "ok 2",
-    }
+
 
 app.listen(port, () => {
     console.log(result)
