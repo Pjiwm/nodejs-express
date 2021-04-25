@@ -6,19 +6,22 @@ const port = process.env.PORT || 3000
 
 
 app.get('/api/info', (req, res) => {
-    let student = {
-        "naam": "Pim Munne",
-        "studentnummer": "2170811",
-        "opleiding": "informatica",
-        "bescrhijving": "dit is een nodejs server voor samen eten",
-        "SonarQube": "",
+    const student = {
+        naam: "Pim Munne",
+        studentnummer: "2170811",
+        opleiding: "informatica",
+        bescrhijving: "dit is een nodejs server voor samen eten",
+        SonarQube: null,
     }
     res.status(200).json(student).end()
 })
 
-// GET method route
-app.get('/api', function (req, res) {
+// post method route
+app.post('/api/post-test', (req, res) => {
     res.send('GET request to the homepage')
+    const obj = req.body
+    console.log(obj)
+    res.status(200).json(obj).end()
 })
 
 // POST method route
