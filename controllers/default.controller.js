@@ -1,6 +1,5 @@
-const express = require('express')
 const logger = require('tracer').colorConsole()
-const app = express()
+
 
 let controller = {
     getAll(req, res, next) {

@@ -7,6 +7,7 @@ const port = process.env.PORT || 3000
 const routes = require('./routes/default.routes.js')
 const authentication = require('./routes/authentication.routes')
 const  studenthomes = require('./routes/studenthome.routes')
+app.use(express.json());
 
 app.use('/api', authentication)
 app.use('/api', studenthomes)

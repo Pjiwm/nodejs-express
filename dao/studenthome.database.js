@@ -8,22 +8,16 @@ module.exports = {
     info: "database info",
 
     add(item, callback) {
-        setTimeout(() => {
-            this.db.push(item)
+        this.db.push(item)
+        if (callback !== undefined) {
             callback("success", undefined)
-
-        }, 500)
+        }
     },
 
     get(index, callback) {
-     setTimeout(() => {
-         const itemNotFound = true;
-         if(itemNotFound) {
-             callback(undefined, "error item not found")
-         } else {
-             callback({name: "item"}, undefined)
-         }
-     }, 500)    
+        if (callback !== undefined) {
+            callback(undefined, "error item not found")
+        }
     },
 
 }
