@@ -4,10 +4,12 @@ const port = process.env.PORT || 3000
 
 
 // routes
-const routes = require('./routes/routes.js')
+const routes = require('./routes/default.routes.js')
 const authentication = require('./routes/authentication.routes')
+const  studenthomes = require('./routes/studenthome.routes')
 
 app.use('/api', authentication)
+app.use('/api', studenthomes)
 app.use('/', routes)
 
 
