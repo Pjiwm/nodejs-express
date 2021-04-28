@@ -9,7 +9,7 @@ let controller = {
             bescrhijving: "dit is een nodejs server voor samen eten",
             SonarQube: null,
         }
-        res.status(200).json(student).end()
+        res.json(student)
         logger.info('called GET info')
     }
 }

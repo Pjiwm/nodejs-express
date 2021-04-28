@@ -2,7 +2,28 @@ module.exports = {
     db: [
         {
             id: 0,
-            name: "mijn osso"
+            name: "mijn osso",
+            city: "gamer-city"
+        },
+        {
+            id: 1,
+            name: "mijn osso",
+            city: "gamer-city"
+        },
+        {
+            id: 2,
+            name: "mijn osso",
+            city: "gamer-city"
+        },
+        {
+            id: 3,
+            name: "hobo osso",
+            city: "gamer-city"
+        },
+        {
+            id: 4,
+            name: "programmer osso",
+            city: "programmer-city"
         },
     ],
     info: "database info",

@@ -10,7 +10,7 @@ const  studenthomes = require('./routes/studenthome.routes')
 app.use(express.json());
 
 app.use('/api', authentication)
-app.use('/api', studenthomes)
+app.use('/api/studenthome', studenthomes)
 app.use('/', routes)
 
 
