@@ -4,9 +4,10 @@ const controller = require('../controllers/studenthome.controller')
 
 router.post('', controller.addStudentHome)
 router.get('/:homeId', controller.getStudentHomeDetails)
+router.get('/:name/:city', controller.getStudentHomeNameCity)
 router.delete('/:homeId', controller.deleteStudentHome)
 router.put('/:homeId', controller.alterStudentHome)
-router.get('/:name/:city', controller.getStudentHomeNameCity)
+
 // TODO - studenten filter lijst
 
 

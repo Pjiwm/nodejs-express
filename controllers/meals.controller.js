@@ -5,9 +5,11 @@ let database = require('../dao/studenthome.database')
 
 
 let controller = {
-    showStudentHomes(req, res) {
-
-        res.status(200).json(database.db)
+    showMeals(req, res) {
+        const id = req.params.homeId
+        const mealList = database.db[findIndex(id)].meals
+        logger.debug('displaying:', mealList)
+        res.send(mealList)
         logger.info('called all: GET studenthomes')
     },
     addMeal(req, res) {
@@ -29,62 +31,57 @@ let controller = {
             res.send({ message: "successful" })
         } else {
             // error afhandeling
-            res.status(400).send({message: "could not post object"})
+            res.status(400).send({ message: "could not post object" })
         }
 
     },
 
 
 
-    // moet nog gefixt worden
-    getStudentHome(req, res) {
-        const name = req.params.name
-        const city = req.params.city
-        let returnList = []
-        logger.debug('given name and city:', city, name)
-        for (let i = 0; i < database.db.length; i++) {
-            if (name == database.db[i].name && city == database.db[i].city) {
-                returnList.push(database.db[i])
-                logger.debug('to request list added: ' + database.db[i])
-                logger.info('called: GET studenthome')
-            }
-        }
-        res.send(returnList)
+    
+    getMealDetails(req, res) {
+        const index = findIndex(req.params.homeId)
+        const mealIndex = findMealIndex(index, req.params.mealId)
+        const meal = database.db[index].meals[mealIndex]
 
-
+        logger.debug('given meal:', meal)
+        res.send(meal)
     },
 
-    getStudentHomeDetails(req, res) {
-        const id = req.params.homeId
-        res.send(database.db[id])
-    },
+    deleteMeal(req, res) {
+        const index = findIndex(req.params.homeId)
+        const mealIndex = findMealIndex(index, req.params.mealId)
 
-    deleteStudentHome(req, res) {
-        const id = req.params.homeId
-        logger.info('called: DELETE studenthome')
-        logger.debug('removed house:', database.db[id])
-        database.db.splice(id)
+        logger.info('called: DELETE meal')
+        logger.debug('removed meal:', database.db[index].meals[mealIndex])
+        database.db[index].meals.splice(mealIndex)
         res.send({ message: "successfull" })
     },
-    alterStudentHome(req, res, next) {
-        const id = req.params.homeId
-        logger.info('called: PUT studenthome')
+
+    alterMeal(req, res, next) {
+        const homeId = req.params.homeId
+        const mealId = req.params.mealId
+        let homeIndex = findIndex(homeId)
+        let mealIndex = findMealIndex(homeIndex, mealId)
+        logger.info('called: PUT meal')
         logger.debug('params:', req.params)
-        logger.debug('edited house from:', database.db[id])
-        database.db[id] = {
-            id,
-            name: req.body.name,
-            city: req.body.city
-        }
-        if (database.db[id] == undefined) {
-            res.send({
-                message: "no data found",
-                error: 204
-            })
+        logger.info('edited meal from:', database.db[homeIndex])
+
+        if (mealIndex !== undefined) {
+            database.db[homeIndex].meals[mealIndex] = {
+                id: mealId,
+                name: req.body.name,
+                type: req.body.type
+            }
+            logger.info('to:', req.body)
+            res.send({ message: "successful" })
+
         } else {
 
-            logger.debug('to:', database.db[id])
-            res.send({ message: "successful" })
+            res.status(201).send({
+                message: "failed to edit meal",
+                error: 201
+            })
         }
     }
 
@@ -98,11 +95,25 @@ function findIndex(id) {
     logger.debug('finding index for id:', id)
     for (let i = 0; i < database.db.length; i++) {
         if (database.db[i].id == id) {
-            logger.debug(database.db[i].id)
             logger.debug('object with id', id, 'is on index:', i)
             return i
         }
     }
+    return undefined
+}
+
+
+
+function findMealIndex(homeIndex, mealId) {
+    let meals = database.db[homeIndex].meals
+    logger.debug(meals.length)
+    for (let i = 0; i < meals.length; i++) {
+        if (mealId == meals[i].id) {
+            logger.debug('object with id', mealId, 'is on mealIndex:', i)
+            return i
+        }
+    }
+    logger.debug('object with id', mealId, 'is', undefined)
     return undefined
 }
 

@@ -30,6 +30,16 @@ module.exports = {
             city: "programmer-city",
             meals: []
         },
+        {
+            id: 5,
+            name: "hype house",
+            city: "boomer-town",
+            meals: [{
+                id: 1,
+                name: "paprika",
+                type: "gezond"
+            }]
+        }
     ],
     info: "database info",
 

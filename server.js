@@ -11,7 +11,7 @@ const meals = require('./routes/meals.routes')
 app.use(express.json());
 
 app.use('/api', authentication)
-app.use('api/studenthome', meals)
+app.use('/api/studenthome', meals)
 app.use('/api/studenthome', studenthomes)
 app.use('/', routes)
 

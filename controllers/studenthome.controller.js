@@ -25,6 +25,7 @@ let controller = {
     },
     // moet nog gefixt worden
     getStudentHomeNameCity(req, res) {
+        logger.info('called: GET studenthome via name and city')
         const name = req.params.name
         const city = req.params.city
         let returnList = []
@@ -42,10 +43,10 @@ let controller = {
     },
 
     getStudentHomeDetails(req, res) {
+        logger.info('called: GET studenthome details')
         const id = req.params.homeId
         let index = findIndex(id)
         if (database.db[index] !== undefined) {
-            logger.info('called: GET studenthome details')
             res.send(database.db[index])
         } else {
             // error afhandeling
