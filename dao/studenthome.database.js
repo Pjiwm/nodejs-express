@@ -3,27 +3,32 @@ module.exports = {
         {
             id: 0,
             name: "mijn osso",
-            city: "gamer-city"
+            city: "gamer-city",
+            meals: []
         },
         {
             id: 1,
             name: "mijn osso",
-            city: "gamer-city"
+            city: "gamer-city",
+            meals: []
         },
         {
             id: 2,
             name: "mijn osso",
-            city: "gamer-city"
+            city: "gamer-city",
+            meals: []
         },
         {
             id: 3,
             name: "hobo osso",
-            city: "gamer-city"
+            city: "gamer-city",
+            meals: []
         },
         {
             id: 4,
             name: "programmer osso",
-            city: "programmer-city"
+            city: "programmer-city",
+            meals: []
         },
     ],
     info: "database info",

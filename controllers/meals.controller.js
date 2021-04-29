@@ -11,15 +11,31 @@ let controller = {
         logger.info('called all: GET studenthomes')
     },
     addMeal(req, res) {
-        const id = req.params.homeId
-        database.db[id].meal = {
+        const homeId = req.params.homeId
+        logger.debug(homeId)
+        let index = findIndex(homeId)
+        if (index !== undefined) {
+            const id = req.body.id
+            const name = req.body.name
+            const type = req.body.type
+            database.db[index].meals.push({
+                id,
+                name,
+                type
+            })
 
+            logger.debug('added meal:', database.db[index].meals)
+            logger.info('called: POST meal')
+            res.send({ message: "successful" })
+        } else {
+            // error afhandeling
+            res.status(400).send({message: "could not post object"})
         }
 
-        logger.info('called all: POST studenthome')
-        logger.debug('added studenthome: ' + req.body)
-        res.send({ message: "successful" })
     },
+
+
+
     // moet nog gefixt worden
     getStudentHome(req, res) {
         const name = req.params.name
@@ -73,5 +89,22 @@ let controller = {
     }
 
 }
+
+function findIndex(id) {
+    if (id === undefined) {
+        return undefined
+    }
+
+    logger.debug('finding index for id:', id)
+    for (let i = 0; i < database.db.length; i++) {
+        if (database.db[i].id == id) {
+            logger.debug(database.db[i].id)
+            logger.debug('object with id', id, 'is on index:', i)
+            return i
+        }
+    }
+    return undefined
+}
+
 
 module.exports = controller

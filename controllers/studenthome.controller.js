@@ -15,7 +15,8 @@ let controller = {
         database.add({
             id,
             name: req.body.name,
-            city: req.body.city
+            city: req.body.city,
+            meals: []
         })
 
         logger.info('called all: POST studenthome')
