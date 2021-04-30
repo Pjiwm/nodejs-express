@@ -1,13 +1,12 @@
 const express = require('express')
-const router = express.Router()
-const controller = require('../controllers/meals.controller')
+const mealsRoutes = express.Router()
+const Meals = require('../controllers/meals.controller')
 
-router.put('/:homeId/meal/:mealId', controller.alterMeal)
-router.post('/:homeId/meal', controller.addMeal)
-router.get('/:homeId/meal', controller.showMeals)
-router.get('/:homeId/meal/:mealId', controller.showMeals)
-router.delete('/:homeId/meal/:mealId', controller.deleteMeal)
+const meals = new Meals();
+mealsRoutes.put('/:mealId', meals.update)
+mealsRoutes.post('/', meals.create)
+mealsRoutes.get('/', meals.findAll)
+mealsRoutes.get('/:mealId', meals.findOne)
+mealsRoutes.delete('/:mealId', meals.remove)
 
-
-
-module.exports = router
+module.exports = mealsRoutes

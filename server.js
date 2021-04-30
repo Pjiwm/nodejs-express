@@ -2,18 +2,47 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
 
+const controller = require('./controllers/default.controller')
+const apiRoutes = require('./routes/api.routes')
 
-// routes
+
 const routes = require('./routes/default.routes.js')
-const authentication = require('./routes/authentication.routes')
-const  studenthomes = require('./routes/studenthome.routes')
-const meals = require('./routes/meals.routes')
 app.use(express.json());
 
-app.use('/api', authentication)
-app.use('/api/studenthome', meals)
-app.use('/api/studenthome', studenthomes)
-app.use('/', routes)
+app.use(controller.showError)
+
+app.use('/api', apiRoutes)
+
+
+
+// router.all('*', controller.getAll)
+
+// // app.all('*', (req, res, next) => {
+// //     const requestMethod = req.method
+// //     const reqUrl = req.url
+// //     console.log('called all:', requestMethod, reqUrl)
+// //     next()
+// // })
+
+
+// // router.all('*', (req, res, next) => {
+// //     next({
+// //         message: "Endpoint " + req.url + " does not exist ",
+// //         errorCode: 401
+// //     })
+// //     console.log('called all: GET all')
+// // })
+// router.all('*', controller.getError)
+
+// // router.use('*', (error, req, res, next) => {
+// //     console.log('Errorhandler called!')
+// //     console.log(error)
+// //     res.status(error.errorCode).json({
+// //         message: "Some error has occured",
+// //         error: error
+// //     })
+// // })
+// router.use('*', controller.showError)
 
 
 
