@@ -1,5 +1,5 @@
 const express = require('express')
-const mealsRoutes = express.Router()
+const mealsRoutes = express.Router({ mergeParams: true })
 const Meals = require('../controllers/meals.controller')
 
 const meals = new Meals();

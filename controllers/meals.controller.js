@@ -2,12 +2,35 @@ const logger = require('tracer').colorConsole()
 let database = require('../dao/home.database')
 
 class Meals {
-    findAll({ params }, res) {
-        const mealList = database.getHome(params.homeId)
-        logger.debug('displaying:', mealList)
-        res.send(mealList)
-        logger.info('called all: GET meals')
+    create({ params, body }, res) {
+        logger.info('[MealsController]: create')
+        const home = database.getHome(params.homeId);
+        logger.debug('[MealsController] inserted data:', home)
+
+        if (home.length) {
+            res.send(database.createMeal(params.homeId, body))
+            logger.info('[MealsController]: create successful')
+        } else {
+            res.status(204).send()
+            logger.info('[MealsController]: create failed')
+        }
     }
+
+    findAll({ params }, res) {
+        logger.info('[MealsController]: findAll')
+        const home = database.getHome(params.homeId)[0]
+
+        if (home.meals.length) {
+
+            logger.debug('[MealsController]: findAll found meals:', home.meals)
+            res.send(home.meals)
+            logger.info('[MealsController]: findAll successful')
+        } else {
+            logger.info('[MealsController]: findAll failed')
+            res.status(204).send()
+        }
+    }
+
     findOne({ params }, res) {
         const meal = database.getMeal(params.homeId, params.mealId)
         logger.debug('given meal:', meal)
@@ -16,29 +39,10 @@ class Meals {
     }
 
 
-    create({ params, body }, res) {
-        const home = database.getHome(params.homeId);
-
-        if (home.length) {
-            database.createMeal(params.homeId, body)
-
-            // database.db[index].meals.push({
-            //     id,
-            //     name,
-            //     type
-            // })
 
 
 
-            // database.db.filter(item => item.id === req.body.id)
-
-            // logger.debug('added meal:', database.db[index].meals)
-            // logger.info('called: POST meal')
-            res.send({ message: "successful" })
-        }
-    }
-
-    remove({ params }, send) {
+    remove({ params }, res) {
         const index = findIndex(params.homeId)
         const mealIndex = findMealIndex(index, params.mealId)
 

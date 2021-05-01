@@ -57,10 +57,14 @@ module.exports = {
     // },
 
     createHome(_home) {
-        const id = this.db[this.db.length - 1].id + 1
-        console.log(this.db.length, ' lengte db')
-        console.log(id)
-        const newHome = {..._home, id }
+        let id
+        if (!this.db.length) {
+            id = 0
+        } else {
+            id = this.db[this.db.length - 1].id + 1
+        }
+
+        const newHome = { ..._home, id }
         this.db.push(newHome)
 
         return newHome
@@ -70,7 +74,7 @@ module.exports = {
         const currentHome = this.getHome(_homeId)[0]
         const newHome = { ...currentHome, ..._newHome }
         const homeIndex = this.db.indexOf(currentHome)
-        this.db[homeIndex] = newHome;
+        this.db[homeIndex] = newHome
         return newHome
     },
 
@@ -81,7 +85,6 @@ module.exports = {
     },
 
     getHome(_id) {
-        console.log(_id);
         return this.db.filter(home => home.id === Number(_id))
     },
 
@@ -97,11 +100,20 @@ module.exports = {
         const meal = this.getMeal(_homeId, _mealId);
         const mealIndex = this.getHome(_homeId).meals.indexOf(meal);
 
-        this.getHome(_homeId).meals.splice(mealIndex, 1);
+        this.getHome(_homeId).meals.splice(mealIndex, 1)
     },
 
-    createMeal(_homeId, meal) {
-        this.getHome(_homeId).meals.push(meal);
+    createMeal(_homeId, _meal) {
+        let id
+        const home = this.getHome(_homeId)[0]
+        if (!home.meals.length) {
+            id = 0
+        } else {
+            id = home.meals[home.meals.length - 1].id + 1
+        }
+        const newMeal = {..._meal, id}
+        home.meals.push(newMeal)
+        return newMeal
     }
 
 }
