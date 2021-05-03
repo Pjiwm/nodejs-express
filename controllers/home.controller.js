@@ -4,7 +4,7 @@ let database = require('../dao/home.database')
 const { param } = require('../routes/meals.routes')
 
 class Homes {
-
+// TODO create validation for phone number and postalcode and add correct errors from file
     create({ body }, res) {
         logger.info('[HomesController]: create')
         if (body.name === undefined || body.city === undefined) {
@@ -45,7 +45,7 @@ class Homes {
         const home = database.getHome(params.homeId)
         if (home.length) {
 
-            logger.info('[HomesController]: update')
+            logger.info('[HomesController]: update succesful')
             logger.debug('[HomesController]: updated home with ID:', params.homeId, 'from:', home, 'to:', body)
             res.send(database.updateHome(params.homeId, body))
 
@@ -59,17 +59,29 @@ class Homes {
     findByQuery({ query }, res) {
         logger.info('[HomesController]: findByQuery')
         if (Object.keys(query).length) {
-            const queriedHomes = database.getHomeByNameAndCity(query.name, query.city);
+
+            const queriedHomes = database.getHomeByNameAndCity(query.name, query.city)
             res.send(queriedHomes)
+            logger.info('[HomesController]: findByQuery found matching information with query')
+
         } else {
-            res.send(database.db)
+            
+            res.status(404).send({ message: "the name or city" + query.name + ", " + query.city + " does not exit", error: 404})
+            logger.info(`[HomesController]: findByQuery didn't find matching information with query, sending all`)
         }
     }
 
     findOneById({ params }, res) {
         logger.info('[HomesController]: findOneById')
-        res.send(database.getHome(params.homeId)[0])
+        const home = database.getHome(params.homeId)[0]
+        if (home.length) {
+            res.send(home)
+            logger.info('[HomesController]: findOneById successful')
+        } else {
+            res.status(404).send({ code: 404, error: "Home with id " + paramd.homeId + "doesn't exist" })
+            logger.info('[HomesController]: findOneById failed')
+        }
     }
-};
+}
 
-module.exports = Homes;
+module.exports = Homes

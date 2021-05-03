@@ -93,14 +93,16 @@ module.exports = {
     },
 
     getMeal(_homeId, _mealId) {
-        return this.getHome(_homeId).meals.filter(meal => meal.id === _mealId)
+        return this.getHome(Number(_homeId))[0].meals.filter(meal => meal.id === Number(_mealId))
     },
 
     removeMeal(_homeId, _mealId) {
-        const meal = this.getMeal(_homeId, _mealId);
-        const mealIndex = this.getHome(_homeId).meals.indexOf(meal);
+        homeId = Number(_homeId)
+        mealId = Number(_mealId)
+        const meal = this.getMeal(homeId, mealId);
+        const mealIndex = this.getHome(mealId)[0].meals.indexOf(meal);
 
-        this.getHome(_homeId).meals.splice(mealIndex, 1)
+        this.getHome(homeId)[0].meals.splice(mealIndex, 1)
     },
 
     createMeal(_homeId, _meal) {
@@ -114,6 +116,18 @@ module.exports = {
         const newMeal = {..._meal, id}
         home.meals.push(newMeal)
         return newMeal
+    },
+
+    updateMeal(_homeId, _mealId, _newMeal) {
+        const currentMeal = this.getMeal(_homeId, _mealId)[0]
+        const mealIndex = this.getHome(_homeId)[0].meals.indexOf(currentMeal)
+        
+        this.getHome(_homeId)[0].meals[mealIndex] = _newMeal
+        console.log('h:', this.getHome(_homeId))
+        console.log('m:', currentMeal)
+        console.log('mi:', mealIndex)
+        console.log('nm:', this.getHome(_homeId)[0].meals[mealIndex])
+        return _newMeal
     }
 
 }
