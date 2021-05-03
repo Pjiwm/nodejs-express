@@ -1,8 +1,8 @@
+// this file is referenced inside server.js
 const express = require('express');
 const apiRouter = express.Router();
 const studentHomes = require('./home.routes')
 const controller = require('../controllers/authentication.controller');
-
 apiRouter.get('/info', controller.getInfo);
 apiRouter.use('/studenthome', studentHomes)
 

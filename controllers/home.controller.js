@@ -4,23 +4,33 @@ let database = require('../dao/home.database')
 const { param } = require('../routes/meals.routes')
 
 class Homes {
-// TODO create validation for phone number and postalcode and add correct errors from file
+    // creates a home inside the home.database's DB.
     create({ body }, res) {
         logger.info('[HomesController]: create')
-        if (body.name === undefined || body.city === undefined) {
+        if (body.name === undefined || body.city === undefined || body.phoneNumber === undefined || body.zipcode === undefined) {
 
             logger.info('[HomesController]: create failed')
+            logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
             res.status(400).send({ code: 400, error: "Insufficient data was given" })
 
         } else {
+            logger.info('[HomesController]: create found all arguments for new home')
+            const createdHome = database.createHome(body)
+            if (createdHome !== undefined) {
 
-            logger.info('[HomesController]: create successful')
-            res.send(database.createHome(body))
+                logger.info('[HomesController]: create successful')
+                res.send(createdHome)
+
+            } else {
+                logger.info('[HomesController]: create failed')
+                res.send({ message: "invalid or duplicate data was given", error: 400 })
+            }
+
         }
         logger.debug('[HomesController] inserted data:', body)
 
     }
-
+    // removes a home inside the home.database's DB. 
     remove({ params }, res) {
         logger.info('[HomesController]: remove')
 
@@ -40,14 +50,35 @@ class Homes {
         }
     }
 
+    // updates a home inside the home.database's DB by replacing its own content with requested information.
     update({ params, body }, res) {
         logger.info('[HomesController]: update')
         const home = database.getHome(params.homeId)
         if (home.length) {
+            
+            const newHome = database.updateHome(params.homeId, body)
 
-            logger.info('[HomesController]: update succesful')
-            logger.debug('[HomesController]: updated home with ID:', params.homeId, 'from:', home, 'to:', body)
-            res.send(database.updateHome(params.homeId, body))
+            if (body.name === undefined || body.city === undefined || body.phoneNumber === undefined || body.zipcode === undefined) {
+                logger.info('[HomesController]: update failed')
+                logger.debug('[HomesController]: updated home is:', newHome)
+                res.status(400).send({ message: "Insufficient data was given", error: 400 })
+
+            } else {
+                
+                console.log('check of undef:', newHome)
+                if (newHome !== undefined) {
+
+                    res.send(newHome)
+                    logger.info('[HomesController]: update succesful')
+                    logger.debug('[HomesController]: updated home with ID:', params.homeId, 'from:', home, 'to:', body)
+
+                } else {
+
+                    res.status(400).send({ code: 400, error: "invalid or duplicate data was given" })
+                    logger.info('[HomesController]: update failed')
+                    logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
+                }
+            }
 
         } else {
 
@@ -55,7 +86,7 @@ class Homes {
             logger.info('[HomesController]: update failed')
         }
     }
-
+    // finds a home based on the query data name and city.
     findByQuery({ query }, res) {
         logger.info('[HomesController]: findByQuery')
         if (Object.keys(query).length) {
@@ -65,12 +96,12 @@ class Homes {
             logger.info('[HomesController]: findByQuery found matching information with query')
 
         } else {
-            
-            res.status(404).send({ message: "the name or city" + query.name + ", " + query.city + " does not exit", error: 404})
+
+            res.status(404).send({ message: "the name or city" + query.name + ", " + query.city + " does not exit", error: 404 })
             logger.info(`[HomesController]: findByQuery didn't find matching information with query, sending all`)
         }
     }
-
+    // displays a specific home that has been requested via its ID.
     findOneById({ params }, res) {
         logger.info('[HomesController]: findOneById')
         const home = database.getHome(params.homeId)[0]

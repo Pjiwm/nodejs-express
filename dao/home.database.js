@@ -1,3 +1,7 @@
+/*
+* Database contains of already existing dummy data and CRUD 
+* functionality for homes and meals.
+*/
 module.exports = {
     db: [
         {
@@ -43,18 +47,6 @@ module.exports = {
     ],
     info: "database info",
 
-    // add(item, callback) {
-    //     this.db.push(item)
-    //     if (callback !== undefined) {
-    //         callback("success", undefined)
-    //     }
-    // },
-
-    // get(index, callback) {
-    //     if (callback !== undefined) {
-    //         callback(undefined, "error item not found")
-    //     }
-    // },
 
     createHome(_home) {
         let id
@@ -63,19 +55,30 @@ module.exports = {
         } else {
             id = this.db[this.db.length - 1].id + 1
         }
+        /*
+        *   checks Dutch postalcode via regex. Both phones at home and mobile phones have each 10 digits.
+        *   To not overcomplicate things country codes are not accepted, since the phonenumber will likely by a 
+        */
+        if (this.validateHome(_home)) {
+            const newHome = { ..._home, id }
+            this.db.push(newHome)
 
-        const newHome = { ..._home, id }
-        this.db.push(newHome)
-
-        return newHome
+            return newHome
+        } else {
+            return undefined
+        }
     },
 
     updateHome(_homeId, _newHome) {
-        const currentHome = this.getHome(_homeId)[0]
-        const newHome = { ...currentHome, ..._newHome }
-        const homeIndex = this.db.indexOf(currentHome)
-        this.db[homeIndex] = newHome
-        return newHome
+        if (this.validateHome(_newHome)) {
+            const currentHome = this.getHome(_homeId)[0]
+            const newHome = { ...currentHome, ..._newHome }
+            const homeIndex = this.db.indexOf(currentHome)
+            this.db[homeIndex] = newHome
+            return newHome
+        } else {
+            return undefined
+        }
     },
 
     removeHome(_homeId) {
@@ -90,6 +93,16 @@ module.exports = {
 
     getHomeByNameAndCity(_name, _city) {
         return this.db.filter(home => home.name === _name && home.city === _city)
+    },
+
+    validateHome(_home) {
+        const phoneNumberLength = _home.phoneNumber.length
+        const existingHome = this.db.filter(home => home.name === _home.name)
+        if (/^[1-9][0-9]{3} ?[A-Z]{2}$/.test(_home.zipcode) && phoneNumberLength === 10 && !existingHome.length) {
+            return true
+        } else {
+            return false
+        }
     },
 
     getMeal(_homeId, _mealId) {
@@ -113,7 +126,7 @@ module.exports = {
         } else {
             id = home.meals[home.meals.length - 1].id + 1
         }
-        const newMeal = {..._meal, id}
+        const newMeal = { ..._meal, id }
         home.meals.push(newMeal)
         return newMeal
     },
@@ -121,21 +134,8 @@ module.exports = {
     updateMeal(_homeId, _mealId, _newMeal) {
         const currentMeal = this.getMeal(_homeId, _mealId)[0]
         const mealIndex = this.getHome(_homeId)[0].meals.indexOf(currentMeal)
-        
         this.getHome(_homeId)[0].meals[mealIndex] = _newMeal
-        console.log('h:', this.getHome(_homeId))
-        console.log('m:', currentMeal)
-        console.log('mi:', mealIndex)
-        console.log('nm:', this.getHome(_homeId)[0].meals[mealIndex])
         return _newMeal
     }
 
 }
-
-
-// database.add(movie, (result) => {
-//     logger.debug("item add function was called")
-
-
-//     }
-// })
