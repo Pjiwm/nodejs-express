@@ -1,7 +1,8 @@
 const logger = require('tracer').colorConsole()
 
-let controller = {
+class Authentication {
     getInfo(req, res) {
+        logger.info('[AuthenticationController]: getInfo')
         const student = {
             naam: "Pim Munne",
             studentnummer: "2170811",
@@ -10,9 +11,8 @@ let controller = {
             SonarQube: null,
         }
         res.json(student)
-        logger.info('called GET info')
     }
 }
 
-module.exports = controller
+module.exports = Authentication
 
