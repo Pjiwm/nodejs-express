@@ -1,8 +1,8 @@
 const logger = require('tracer').colorConsole()
 let database = require('../dao/home.database');
-const { param } = require('../routes/meals.routes');
 
 class Meals {
+    // creates a meal inside the meal array of a home.
     create({ params, body }, res) {
         logger.info('[MealsController]: create')
         const home = database.getHome(params.homeId);
@@ -15,11 +15,11 @@ class Meals {
 
         } else {
 
-            res.status(400).send({message: "incomplete data", error: 400})
+            res.status(400).send({ message: "incomplete data", error: 400 })
             logger.info('[MealsController]: create failed')
         }
     }
-
+    // displays all the meals that are inside a home.
     findAll({ params }, res) {
         logger.info('[MealsController]: findAll')
         const home = database.getHome(params.homeId)[0]
@@ -34,16 +34,16 @@ class Meals {
 
             logget.debug('[MealsController]: findAll home:', home)
             logger.info('[MealsController]: findAll failed')
-            res.status(404).send({message: "Meal(s) do not exit", error: 404})
+            res.status(404).send({ message: "Meal(s) do not exit", error: 404 })
         }
     }
-// TODO add if statements for failed and successful states + logging
+    // displays specified meal inside a home via an ID
     findOne({ params }, res) {
         logger.info('[MealsController]: findOne')
         const meal = database.getMeal(params.homeId, params.mealId)
         logger.debug('[MealsController]: findOne meal:', meal)
 
-        if(meal.length) {
+        if (meal.length) {
 
             logger.info('[MealsController]: successful')
             res.send(meal)
@@ -53,13 +53,13 @@ class Meals {
             logger.info('[MealsController]: findOne failed')
             res.status(404).send({ message: "Meal does not exits", error: 404 })
         }
-        
-    }
 
+    }
+    // removes a meal from a home via the ID 
     remove({ params }, res) {
         logger.info('[MealsController]: remove')
         const meal = database.getMeal(params.homeId, params.mealId)
-        if(meal.length) {
+        if (meal.length) {
             database.removeMeal(params.homeId, params.mealId)
             logger.info('[MealsController]: remove successful')
             res.send({ message: "successfull" })
@@ -68,13 +68,13 @@ class Meals {
             logger.debug('[MealsController]: remove meal:', meal)
             res.send({ message: "Meal(s) do not exist", error: 404 })
         }
-               
-    }
 
+    }
+    // updates the meal from a home by replacing its own content with the requested information.
     update({ params, body }, res) {
         logger.info('[MealsController]: update')
         const currentMeal = database.getMeal(params.homeId, params.mealId)
-        if(currentMeal.length && body.name !== undefined && body.type !== undefined) {
+        if (currentMeal.length && body.name !== undefined && body.type !== undefined) {
             logger.info('[MealsController]: update successful')
             var newMeal = {
                 id: Number(params.mealId),
@@ -85,13 +85,13 @@ class Meals {
             logger.debug('[MealsController]: updated meal with ID:', params.mealId, 'from:', currentMeal, 'to:', newMeal)
             res.send(database.updateMeal(params.homeId, params.mealId, newMeal))
 
-        } else if (body.name === undefined || body.type === undefined){
+        } else if (body.name === undefined || body.type === undefined) {
             logger.info('[MealsController]: update failed')
-            res.status(400).send({message: "missing arguments", error: 400})
+            res.status(400).send({ message: "missing arguments", error: 400 })
         } else {
             logger.info('[MealsController]: update failed')
-        
-            res.status(404).send({ message: "Meal does not exist", error: 404})
+
+            res.status(404).send({ message: "Meal does not exist", error: 404 })
         }
         logger.debug('[MealsController]: update newMeal:', newMeal)
     }

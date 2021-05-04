@@ -92,7 +92,7 @@ module.exports = {
     },
 
     getHomeByNameAndCity(_name, _city) {
-        return this.db.filter(home => home.name === _name && home.city === _city)
+        return this.db.filter(home => home.name === _name || home.city === _city)
     },
 
     validateHome(_home) {
