@@ -98,11 +98,8 @@ module.exports = {
     validateHome(_home) {
         const phoneNumberLength = _home.phoneNumber.length
         const existingHome = this.db.filter(home => home.name === _home.name)
-        if (/^[1-9][0-9]{3} ?[A-Z]{2}$/.test(_home.zipcode) && phoneNumberLength === 10 && !existingHome.length) {
-            return true
-        } else {
-            return false
-        }
+        return /^[1-9][0-9]{3} ?[A-Z]{2}$/.test(_home.zipcode) && phoneNumberLength === 10 && !existingHome.length
+        
     },
 
     getMeal(_homeId, _mealId) {

@@ -5,15 +5,15 @@ let controller = {
     getAll(req, res, next) {
         const requestMethod = req.method
         const reqUrl = req.url
-        logger.info('called all:', requestMethod, reqUrl)
+        logger.info('[DefaultController] all:', requestMethod, reqUrl)
         next()
     },
-    getError(req, res, next) {
+    endpointNotFound(req, res, next) {
         next({
-            message: "Endpoint " + req.url + " does not exist ",
-            errorCode: 401
+            message: "Endpoint " + req.baseUrl + " does not exist ",
+            errorCode: 404
         })
-        logger.info('called all: GET all')
+        logger.info('[DefaultController] endpointNotFound')
     },
     showError(error, req, res, next) {
         

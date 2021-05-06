@@ -10,7 +10,7 @@ class Authentication {
             bescrhijving: "dit is een nodejs server voor samen eten",
             SonarQube: null,
         }
-        res.json(student)
+        res.send(student)
     }
 }
 

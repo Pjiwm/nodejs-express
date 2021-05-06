@@ -3,14 +3,18 @@ const app = express()
 const port = process.env.PORT || 3000
 const logger = require('tracer').colorConsole()
 
-const controller = require('./controllers/default.controller')
-const apiRoutes = require('./routes/api.routes')
+const controller = require('./src/controllers/default.controller')
+const apiRoutes = require('./src/routes/api.routes')
 
-app.use(express.json());
+app.use(express.json())
 
-app.use(controller.showError)
+app.use(controller.getAll)
 
 app.use('/api', apiRoutes)
+
+app.use('/*', controller.endpointNotFound)
+
+app.use(controller.showError)
 
 app.listen(port, () => {
     logger.info('Server is running')
