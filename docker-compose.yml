@@ -1,0 +1,10 @@
+version: "3.9"
+services: 
+    node:
+        build: .
+        # command: npm install tracer
+        command: npm start
+        volumes: 
+            - .:/usr/src/app
+        ports: 
+            - 80:3000

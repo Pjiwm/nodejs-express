@@ -1,4 +1,4 @@
-const logger = require('tracer').colorConsole()
+const logger = require("../helpers/log")
 
 
 let controller = {
@@ -8,6 +8,7 @@ let controller = {
         logger.info('[DefaultController] all:', requestMethod, reqUrl)
         next()
     },
+
     endpointNotFound(req, res, next) {
         next({
             message: "Endpoint " + req.baseUrl + " does not exist ",
@@ -15,16 +16,14 @@ let controller = {
         })
         logger.info('[DefaultController] endpointNotFound')
     },
+    
     showError(error, req, res, next) {
-        
-        res.status(error.errorCode).json({
-            message: "Some error has occured",
+        res.status(error.code).json({
             error: error
         })
         logger.info('Errorhandler called!')
         logger.info(error)
     }
-
 }
 
 module.exports = controller

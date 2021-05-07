@@ -1,9 +1,10 @@
-const logger = require('tracer').colorConsole()
+const logger =  require("../helpers/log")
+const faker = require("faker/locale/nl");
 let database = require('../dao/home.database')
 
 class Homes {
     // creates a home inside the home.database's DB.
-    create({ body }, res) {
+    create({ body }, res, next) {
         logger.info('[HomesController]: create')
 
         if (body.name === undefined || body.city === undefined || body.phoneNumber === undefined 
@@ -11,7 +12,7 @@ class Homes {
 
             logger.info('[HomesController]: create failed')
             logger.debug('[HomesController]: create body:', body.name, body.city, body.phoneNumber, body.zipcode)
-            res.status(400).send({ code: 400, error: "Insufficient data was given" })
+            next({ code: 400, error: "Insufficient data was given" })
 
         } else {
 
@@ -25,14 +26,15 @@ class Homes {
 
             } else {
                 logger.info('[HomesController]: create failed')
-                res.send({ message: "invalid or duplicate data was given", error: 400 })
+                next({ code: 400, error: "invalid or duplicate data was given"})
+                // next()
             }
         }
         logger.debug('[HomesController] inserted data:', body)
     }
 
     // removes a home inside the home.database's DB. 
-    remove({ params }, res) {
+    remove({ params }, res, next) {
         logger.info('[HomesController]: remove')
         const home = database.getHome(params.homeId);
         console.log(home)
@@ -46,13 +48,13 @@ class Homes {
 
         } else {
 
-            res.status(404).send({ code: 404, error: "Home doesn't exist" })
+            next({ code: 404, error: "Home doesn't exist" })
             logger.info('[HomesController]: remove failed')
         }
     }
 
     // updates a home inside the home.database's DB by replacing its own content with requested information.
-    update({ params, body }, res) {
+    update({ params, body }, res, next) {
         logger.info('[HomesController]: update')
         const home = database.getHome(params.homeId)
 
@@ -64,7 +66,7 @@ class Homes {
                 || body.zipcode === undefined || body.street === undefined || body.streetNumber === undefined) {
                 logger.info('[HomesController]: update failed')
                 logger.debug('[HomesController]: updated home is:', newHome)
-                res.status(400).send({ message: "Insufficient data was given", error: 400 })
+                next({ error: "Insufficient data was given", code: 400 })
 
             } else {
 
@@ -77,36 +79,37 @@ class Homes {
 
                 } else {
 
-                    res.status(400).send({ code: 400, error: "invalid or duplicate data was given" })
+                    next({ code: 400, error: "invalid or duplicate data was given" })
                     logger.info('[HomesController]: update failed')
                     logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
                 }
             }
         } else {
 
-            res.status(404).send({ code: 404, error: "Home doesn't exist" })
+            next({ code: 404, error: "Home doesn't exist" })
             logger.info('[HomesController]: update failed')
         }
     }
     // finds a home based on the query data name and city.
-    findByQuery({ query }, res) {
+    findByQuery({ query }, res, next) {
         logger.info('[HomesController]: findByQuery')
 
-        if (Object.keys(query).length) {
-
-            var queriedHomes = database.getHomeByNameAndCity(query.name, query.city)
-            res.send(queriedHomes)
-            logger.info('[HomesController]: findByQuery found matching information with query')
-
-        } else {
-
-            res.status(404).send({ message: "the name or city" + query.name + ", " + query.city + " does not exit", error: 404 })
-            logger.info(`[HomesController]: findByQuery didn't find matching information with query, sending all`)
+        if (!Object.keys(query).length) {
+            logger.info('[HomesController]: findByQuery all')
+            return res.send(database.db)
         }
-        logger.debug('[HomesController]: findByQuery queriedhomes:', queriedHomes)
+
+        var queriedHomes = database.getHomeByNameAndCity(query.name, query.city)
+        if(!queriedHomes.length) {
+            return next({ code: 404, error: "no homes found" })
+        }
+
+        res.send(queriedHomes)
+        logger.info('[HomesController]: findByQuery found matching information with query')
+        
     }
     // displays a specific home that has been requested via its ID.
-    findOneById({ params }, res) {
+    findOneById({ params }, res, next) {
         logger.info('[HomesController]: findOneById')
         const home = database.getHome(params.homeId)
 
@@ -117,9 +120,20 @@ class Homes {
 
         } else {
 
-            res.status(404).send({ code: 404, error: "Home with id " + params.homeId + "doesn't exist" })
+            next({ code: 404, error: `Home with id ${params.homeId} doesn't exist` })
             logger.info('[HomesController]: findOneById failed')
         }
+    }
+
+    seed({ params }, res) {
+        const totalRows = params.count ? params.count : 10000;
+
+        database.seed(totalRows)
+
+        res.send({
+            message: "Mn zaad is gestrooid",
+            results: database.db
+        })
     }
 }
 module.exports = Homes

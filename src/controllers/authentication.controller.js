@@ -1,4 +1,4 @@
-const logger = require('tracer').colorConsole()
+const logger = require("../helpers/log")
 
 class Authentication {
     getInfo(req, res) {

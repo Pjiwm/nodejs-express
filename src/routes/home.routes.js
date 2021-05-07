@@ -5,6 +5,8 @@ const mealsRoutes = require('./meals.routes')
 
 const homes = new Homes();
 // all routes for homes
+homesRouter.get('/seed/:count', homes.seed)
+
 homesRouter.post('/', homes.create)
 homesRouter.delete('/:homeId', homes.remove)
 homesRouter.put('/:homeId', homes.update)

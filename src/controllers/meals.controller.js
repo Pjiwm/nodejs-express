@@ -1,4 +1,4 @@
-const logger = require('tracer').colorConsole()
+const logger =  require("../helpers/log")
 let database = require('../dao/home.database');
 
 class Meals {
@@ -59,11 +59,14 @@ class Meals {
     remove({ params }, res) {
         logger.info('[MealsController]: remove')
         const meal = database.getMeal(params.homeId, params.mealId)
+
         if (meal.length) {
             database.removeMeal(params.homeId, params.mealId)
             logger.info('[MealsController]: remove successful')
             res.send({ message: "successfull" })
+
         } else {
+
             logger.info('[MealsController]: remove failed')
             logger.debug('[MealsController]: remove meal:', meal)
             res.send({ message: "Meal(s) do not exist", error: 404 })
@@ -74,7 +77,9 @@ class Meals {
     update({ params, body }, res) {
         logger.info('[MealsController]: update')
         const currentMeal = database.getMeal(params.homeId, params.mealId)
+
         if (currentMeal.length && body.name !== undefined && body.type !== undefined) {
+
             logger.info('[MealsController]: update successful')
             var newMeal = {
                 id: Number(params.mealId),
@@ -86,11 +91,13 @@ class Meals {
             res.send(database.updateMeal(params.homeId, params.mealId, newMeal))
 
         } else if (body.name === undefined || body.type === undefined) {
+
             logger.info('[MealsController]: update failed')
             res.status(400).send({ message: "missing arguments", error: 400 })
-        } else {
-            logger.info('[MealsController]: update failed')
 
+        } else {
+
+            logger.info('[MealsController]: update failed')
             res.status(404).send({ message: "Meal does not exist", error: 404 })
         }
         logger.debug('[MealsController]: update newMeal:', newMeal)

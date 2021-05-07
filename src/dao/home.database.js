@@ -1,50 +1,10 @@
+const faker = require('faker/locale/nl')
 /*
 * Database contains of already existing dummy data and CRUD 
 * functionality for homes and meals.
 */
 module.exports = {
-    db: [
-        {
-            id: 0,
-            name: "mijn osso",
-            city: "gamer-city",
-            meals: []
-        },
-        {
-            id: 1,
-            name: "mijn osso",
-            city: "gamer-city",
-            meals: []
-        },
-        {
-            id: 2,
-            name: "mijn osso",
-            city: "gamer-city",
-            meals: []
-        },
-        {
-            id: 3,
-            name: "hobo osso",
-            city: "gamer-city",
-            meals: []
-        },
-        {
-            id: 4,
-            name: "programmer osso",
-            city: "programmer-city",
-            meals: []
-        },
-        {
-            id: 5,
-            name: "hype house",
-            city: "boomer-town",
-            meals: [{
-                id: 1,
-                name: "paprika",
-                type: "gezond"
-            }]
-        }
-    ],
+    db: [],
     info: "database info",
 
 
@@ -92,7 +52,12 @@ module.exports = {
     },
 
     getHomeByNameAndCity(_name, _city) {
-        return this.db.filter(home => home.name === _name || home.city === _city)
+        if (_name === undefined || _city === undefined) {
+            return this.db.filter(home => home.name === _name || home.city === _city)
+        } else {
+            return this.db.filter(home => home.name === _name && home.city === _city)
+        }
+        
     },
 
     validateHome(_home) {
@@ -133,6 +98,20 @@ module.exports = {
         const mealIndex = this.getHome(_homeId)[0].meals.indexOf(currentMeal)
         this.getHome(_homeId)[0].meals[mealIndex] = _newMeal
         return _newMeal
-    }
+    },
 
+    seed(count, options) {
+        for (let i = 0; i < count; i++) {
+            this.db.push({
+                "id": this.db.length+1,
+                "name": faker.lorem.word(),
+                "city": faker.address.city(),
+                "phoneNumber": faker.phone.phoneNumber('06########'),
+                "zipcode": faker.address.zipCode('####??'),
+                "street": faker.address.streetName(),
+                "streetNumber": faker.datatype.number(),
+                ...options
+            })
+        }
+    }
 }
