@@ -11,8 +11,8 @@ let controller = {
 
     endpointNotFound(req, res, next) {
         next({
-            message: "Endpoint " + req.baseUrl + " does not exist ",
-            errorCode: 404
+            error: "Endpoint " + req.baseUrl + " does not exist ",
+            code: 404
         })
         logger.info('[DefaultController] endpointNotFound')
     },
