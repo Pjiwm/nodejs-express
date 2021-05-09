@@ -12,8 +12,7 @@ module.exports = class BodyValidator {
                 this.errors.push(`${key} is required`)
                 continue;
             }
-            console.log(1)
-            console.log(_body[key])
+
             if (this.types[key].toLowerCase() !== _body[key].constructor.name.toLowerCase()) {
                 this.errors.push(`${key} must be a ${this.types[key]}`)
             }

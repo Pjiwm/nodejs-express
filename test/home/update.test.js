@@ -1,5 +1,5 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testin";
+process.env.NODE_ENV = "testing";
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -25,7 +25,7 @@ describe('UC-204 Studentenhuis wijzigen', function () {
     beforeEach(function () {
         database.db = [];
     })
-    // TODO fix returning HTML instead of JSON
+
     it('TC-204-1 Verplicht veld ontbreekt', function () {
         database.seed(1)
         chai
@@ -39,7 +39,6 @@ describe('UC-204 Studentenhuis wijzigen', function () {
                 "streetNumber": faker.datatype.number()
             })
             .end(function (err, response) {
-                console.log(response)
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })

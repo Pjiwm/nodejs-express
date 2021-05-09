@@ -1,4 +1,4 @@
-const logger =  require("../helpers/log")
+const logger = require("../helpers/log")
 let database = require('../dao/home.database')
 const BodyValidator = require("../helpers/body.validator")
 const types = {
@@ -16,9 +16,9 @@ class Meals {
         logger.info('[MealsController]: create')
         const home = database.getHome(params.homeId)
         const bodyValidator = new BodyValidator(types)
-       
-        if(!bodyValidator.validate(body)) {
-            console.log(2)
+
+        if (!bodyValidator.validate(body)) {
+
             logger.info('[MealsController]: create failed')
             return next({
                 code: 400,
@@ -28,12 +28,12 @@ class Meals {
         }
 
         if (home.length) {
-            console.log(3)
+
             res.send(database.createMeal(params.homeId, body))
             logger.info('[MealsController]: create successful')
 
         } else {
-            console.log(4)
+
             next({ error: "Not Found", message: "Home doesn't exist", code: 404 })
             logger.info('[MealsController]: create failed')
         }
@@ -42,19 +42,19 @@ class Meals {
     findAll({ params }, res, next) {
         logger.info('[MealsController]: findAll')
         const home = database.getHome(params.homeId)[0]
-    
+
 
         if (home !== undefined) {
-            
+
             logger.debug('[MealsController]: findAll found meals:', home.meals)
             res.send(home.meals)
             logger.info('[MealsController]: findAll successful')
 
         } else {
-            
+
             logger.info('[MealsController]: findAll failed')
-            next({error: "Not Found", message: "Meal(s) do not exit", code: 404 })
-            
+            next({ error: "Not Found", message: "Meal(s) do not exit", code: 404 })
+
         }
     }
     // displays specified meal inside a home via an ID
@@ -80,18 +80,18 @@ class Meals {
         logger.info('[MealsController]: remove')
         const meal = database.getMeal(params.homeId, params.mealId)
         if (meal.length) {
-            
+
             database.removeMeal(params.homeId, params.mealId)
-            
+
             logger.info('[MealsController]: remove successful')
             res.send({ message: "successfull" })
-            
+
         } else {
-            
+
             logger.info('[MealsController]: remove failed')
             logger.debug('[MealsController]: remove meal:', meal)
-            next({error: "Not Found", message: "Meal(s) do not exist", code: 404 })
-           
+            next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
+
         }
 
     }
@@ -100,7 +100,12 @@ class Meals {
         logger.info('[MealsController]: update')
         const currentMeal = database.getMeal(params.homeId, params.mealId)
 
-        const bodyValidator = new BodyValidator(types)
+        if (!currentMeal.length) {
+            logger.info('[MealsController]: update failed')
+            return next({ error: "Not Found", message: "Meal does not exist", code: 404 })
+        }
+
+            const bodyValidator = new BodyValidator(types)
         if (!bodyValidator.validate(body)) {
             logger.info('[MealsController]: create failed')
             return next({
@@ -109,7 +114,8 @@ class Meals {
                 message: bodyValidator.errors
             })
         }
-
+        return res.send(database.updateMeal(params.homeId, params.mealId, { ...body, id: Number(params.mealId) }))
+       
         if (currentMeal.length && body.name !== undefined && body.type !== undefined) {
 
             logger.info('[MealsController]: update successful')

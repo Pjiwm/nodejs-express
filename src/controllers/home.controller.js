@@ -1,7 +1,6 @@
 const logger = require("../helpers/log")
-const faker = require("faker/locale/nl");
 let database = require('../dao/home.database')
-const BodyValidator = require("../helpers/body.validator");
+const BodyValidator = require("../helpers/body.validator")
 
 const types = {
     name: "string",
@@ -53,7 +52,7 @@ class Homes {
     remove({ params }, res, next) {
         logger.info('[HomesController]: remove')
         const home = database.getHome(params.homeId);
-        console.log(home)
+        
 
         if (home.length) {
 
