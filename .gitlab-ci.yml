@@ -34,6 +34,7 @@ testing:
     - npm i
     # - npm i mocha
     # - npm i tracer-debug
+    - npm i tracer-debug
     - npm run test
   only:
     - master
