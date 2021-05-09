@@ -163,7 +163,7 @@ class Homes {
         database.seed(totalRows)
 
         res.send({
-            message: "Mn zaad is gestrooid",
+            message: "dummydata has been added",
             results: database.db
         })
     }
