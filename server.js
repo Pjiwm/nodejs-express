@@ -1,42 +1,24 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
+const logger = require("./src/helpers/log");
+let database = require('./src/dao/home.database');
+const controller = require('./src/controllers/default.controller')
+const apiRoutes = require('./src/routes/api.routes')
 
+app.use(express.json())
 
+app.use(controller.getAll)
 
+app.use('/api', apiRoutes)
 
-app.get('/api/info', (req, res) => {
-    const student = {
-        naam: "Pim Munne",
-        studentnummer: "2170811",
-        opleiding: "informatica",
-        bescrhijving: "dit is een nodejs server voor samen eten",
-        SonarQube: null,
-    }
-    res.status(200).json(student).end()
-})
+app.use('/*', controller.endpointNotFound)
 
-// post method route
-app.post('/api/post-test', (req, res) => {
-    res.send('GET request to the homepage')
-    const obj = req.body
-    console.log(obj)
-    res.status(200).json(obj).end()
-})
-
-// POST method route
-app.post('/api', function (req, res) {
-    res.send('POST request to the homepage')
-})
-
-// PuT method route
-app.put('/api', function (req, res) {
-    res.send('POST request to the homepage')
-})
-
-
-
+app.use(controller.showError)
 
 app.listen(port, () => {
-    console.log('server running')
+    database.seed(100)
+    logger.info('Server is running')
 })
+
+module.exports = app
