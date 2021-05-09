@@ -78,19 +78,24 @@ class Meals {
     // removes a meal from a home via the ID 
     remove({ params }, res, next) {
         logger.info('[MealsController]: remove')
+        const home = database.getHome(params.homeId)
+        
+        if(!home.length) {
+            logger.info('[MealsController]: remove failed')
+            return next({ error: "Not Found", message: "Home does not exist", code: 404 })
+        }
+
         const meal = database.getMeal(params.homeId, params.mealId)
         if (meal.length) {
-
             database.removeMeal(params.homeId, params.mealId)
-
             logger.info('[MealsController]: remove successful')
-            res.send({ message: "successfull" })
+            return res.send({ message: "successfull" })
 
         } else {
 
             logger.info('[MealsController]: remove failed')
             logger.debug('[MealsController]: remove meal:', meal)
-            next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
+            return next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
 
         }
 
@@ -115,30 +120,6 @@ class Meals {
             })
         }
         return res.send(database.updateMeal(params.homeId, params.mealId, { ...body, id: Number(params.mealId) }))
-       
-        if (currentMeal.length && body.name !== undefined && body.type !== undefined) {
-
-            logger.info('[MealsController]: update successful')
-            var newMeal = {
-                id: Number(params.mealId),
-                name: body.name,
-                type: body.type
-
-            }
-            logger.debug('[MealsController]: updated meal with ID:', params.mealId, 'from:', currentMeal, 'to:', newMeal)
-            res.send(database.updateMeal(params.homeId, params.mealId, newMeal))
-
-        } else if (body.name === undefined || body.type === undefined) {
-
-            logger.info('[MealsController]: update failed')
-            next({ error: "Bad Request", message: "missing arguments", code: 400 })
-
-        } else {
-
-            logger.info('[MealsController]: update failed')
-            next({ error: "Not Found", message: "Meal does not exist", code: 404 })
-        }
-        logger.debug('[MealsController]: update newMeal:', newMeal)
     }
 }
 

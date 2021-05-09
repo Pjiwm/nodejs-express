@@ -8,47 +8,32 @@ const app = require("../../server")
 
 chai.use(chaiHttp)
 
-describe('C-305 Maaltijd verwijderen', function () {
+describe('UC-303 Lijst van maaltijden opvragen', function () {
     beforeEach(function () {
         database.db = [];
     })
-/*
-* No data is sent when deleting. Therefore test case: TC-305-1 Verplicht veld ontbreekt
-* From the document will be replaced with: TC-305-1 studentenhuis bestaat niet.
-*/
-    it('TC-305-1 studentenhuis bestaat niet', function () {
+
+    it('TC-304-1 Maaltijd bestaat niet', function () {
         database.seed(1)
         chai
             .request(app)
-            .delete("/api/studenthome/2/meal/1")
+            .get("/api/studenthome/1/meal/2")
             .end(function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
     })
 
-    it('TC-305-4 Maaltijd bestaat niet', function () {
+    it('C-304-2 Details van maaltijd geretourneerd', function () {
         database.seed(1)
         chai
             .request(app)
-            .delete("/api/studenthome/1/meal/2")
-            .end(function (err, response) {
-                chai.expect(response).to.have.header('content-type', /json/)
-                chai.expect(response).status(404)
-            })
-    })
-
-    it('TC-305-5 Maaltijd succesvol verwijderd ', function () {
-        database.seed(1)
-        chai
-            .request(app)
-            .delete("/api/studenthome/1/meal/1")
+            .get("/api/studenthome/1/meal/1")
             .end(function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
             })
     })
-
 
 
 
