@@ -9,7 +9,7 @@ const app = require("../../server");
 const { random } = require("faker/locale/nl");
 
 chai.use(chaiHttp)
-
+faker.seed(1236)
 const fakeData = {
     "name": faker.lorem.word(),
     "city": faker.address.city(),

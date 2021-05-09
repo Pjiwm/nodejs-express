@@ -57,14 +57,14 @@ module.exports = {
         } else {
             return this.db.filter(home => home.name === _name && home.city === _city)
         }
-        
+
     },
 
     validateHome(_home) {
         const phoneNumberLength = _home.phoneNumber.length
         const existingHome = this.db.filter(home => home.name === _home.name)
         return /^[1-9][0-9]{3} ?[A-Z]{2}$/.test(_home.zipcode) && phoneNumberLength === 10 && !existingHome.length
-        
+
     },
 
     getMeal(_homeId, _mealId) {
@@ -75,11 +75,10 @@ module.exports = {
         homeId = Number(_homeId)
         mealId = Number(_mealId)
         const meal = this.getMeal(homeId, mealId)
-        console.log(this.getHome(homeId)[0])
         const mealIndex = this.getHome(homeId)[0].meals.indexOf(meal)
-       
+
         this.getHome(homeId)[0].meals.splice(mealIndex, 1)
-        
+
     },
 
     createMeal(_homeId, _meal) {
@@ -105,14 +104,23 @@ module.exports = {
     seed(count, options) {
         for (let i = 0; i < count; i++) {
             this.db.push({
-                "id": this.db.length+1,
+                "id": this.db.length + 1,
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
                 "phoneNumber": faker.phone.phoneNumber('06########'),
                 "zipcode": faker.address.zipCode('####??'),
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number(),
-                "meals": [],
+                "meals": [{
+                    id: 1,
+                    name: faker.lorem.words(1),
+                    description: faker.lorem.words(8),
+                    creationDate: faker.date.past(),
+                    serveDate: faker.date.future(),
+                    price:  `€${faker.datatype.number()},-`,
+                    allergy: faker.lorem.words(3),
+                    ingredients: faker.lorem.words(5).split(" ")
+                }],
                 ...options
             })
         }
