@@ -31,8 +31,9 @@ testing:
   stage: test
   image: node:latest
   script:
-    - npm i mocha
-    - npm i tracer-debug
+    - npm i
+    # - npm i mocha
+    # - npm i tracer-debug
     - npm run test
   only:
     - master
