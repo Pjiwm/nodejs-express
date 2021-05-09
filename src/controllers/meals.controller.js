@@ -5,17 +5,16 @@ class Meals {
     // creates a meal inside the meal array of a home.
     create({ params, body }, res) {
         logger.info('[MealsController]: create')
+        console.log(params.homeId)
         const home = database.getHome(params.homeId);
-        logger.debug('[MealsController] inserted data:', home)
+        // logger.debug('[MealsController] inserted data:', home)
 
         if (home.length) {
-
             res.send(database.createMeal(params.homeId, body))
             logger.info('[MealsController]: create successful')
 
         } else {
-
-            res.status(400).send({ message: "incomplete data", error: 400 })
+            res.status(404).send({ error: "Not Found", message: "incomplete data", code: 404 })
             logger.info('[MealsController]: create failed')
         }
     }
@@ -59,17 +58,19 @@ class Meals {
     remove({ params }, res) {
         logger.info('[MealsController]: remove')
         const meal = database.getMeal(params.homeId, params.mealId)
-
         if (meal.length) {
+            console.log(1)
             database.removeMeal(params.homeId, params.mealId)
+            console.log(2)
             logger.info('[MealsController]: remove successful')
             res.send({ message: "successfull" })
-
+            console.log(3)
         } else {
-
+            console.log(2)
             logger.info('[MealsController]: remove failed')
             logger.debug('[MealsController]: remove meal:', meal)
             res.send({ message: "Meal(s) do not exist", error: 404 })
+            console.log(3)
         }
 
     }

@@ -19,7 +19,7 @@ let controller = {
     
     showError(error, req, res, next) {
         res.status(error.code).json({
-            error: error
+            ...error
         })
         logger.info('Errorhandler called!')
         logger.info(error)

@@ -74,10 +74,12 @@ module.exports = {
     removeMeal(_homeId, _mealId) {
         homeId = Number(_homeId)
         mealId = Number(_mealId)
-        const meal = this.getMeal(homeId, mealId);
-        const mealIndex = this.getHome(mealId)[0].meals.indexOf(meal);
-
+        const meal = this.getMeal(homeId, mealId)
+        console.log(this.getHome(homeId)[0])
+        const mealIndex = this.getHome(homeId)[0].meals.indexOf(meal)
+       
         this.getHome(homeId)[0].meals.splice(mealIndex, 1)
+        
     },
 
     createMeal(_homeId, _meal) {
@@ -110,6 +112,7 @@ module.exports = {
                 "zipcode": faker.address.zipCode('####??'),
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number(),
+                "meals": [],
                 ...options
             })
         }

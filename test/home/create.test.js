@@ -5,7 +5,8 @@ const chai = require("chai")
 const chaiHttp = require('chai-http')
 const faker  = require('faker/locale/nl')
 const logger =  require("../../src/helpers/log")
-const app = require("../../server")
+const app = require("../../server");
+const { random } = require("faker/locale/nl");
 
 chai.use(chaiHttp)
 

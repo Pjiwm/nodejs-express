@@ -1,5 +1,5 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testin";
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -26,23 +26,24 @@ describe('UC-204 Studentenhuis wijzigen', function () {
         database.db = [];
     })
     // TODO fix returning HTML instead of JSON
-    // it('TC-204-1 Verplicht veld ontbreekt', function () {
-    //     database.seed(1)
-    //     chai
-    //         .request(app)
-    //         .put("/api/studenthome/1")
-    //         .send({
-    //             "name": faker.lorem.word(),
-    //             "city": faker.address.city(),
-    //             "zipcode": faker.address.zipCode("####??"),
-    //             "street": faker.address.streetName(),
-    //             "streetNumber": faker.datatype.number()
-    //         })
-    //         .end(function (err, response) {
-    //             chai.expect(response).to.have.header('content-type', /json/)
-    //             chai.expect(response).status(400)
-    //         })
-    // })
+    it('TC-204-1 Verplicht veld ontbreekt', function () {
+        database.seed(1)
+        chai
+            .request(app)
+            .put("/api/studenthome/1")
+            .send({
+                "name": faker.lorem.word(),
+                "city": faker.address.city(),
+                "zipcode": faker.address.zipCode("####??"),
+                "street": faker.address.streetName(),
+                "streetNumber": faker.datatype.number()
+            })
+            .end(function (err, response) {
+                console.log(response)
+                chai.expect(response).to.have.header('content-type', /json/)
+                chai.expect(response).status(404)
+            })
+    })
 
     it('TC-204-2 Invalide postcode', function () {
         database.seed(1)
