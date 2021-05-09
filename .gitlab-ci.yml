@@ -31,6 +31,7 @@ testing:
   stage: test
   image: node:latest
   script:
+    - npm i mocha
     - npm run test
   only:
     - master
@@ -54,6 +55,5 @@ production:
     - apt-get install -y ruby-dev
     - gem install dpl
     - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
-    - npm i mocha
   only:
     - master
