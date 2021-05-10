@@ -8,7 +8,7 @@ const app = require("../../server")
 
 chai.use(chaiHttp)
 
-describe('C-305 Maaltijd verwijderen', function () {
+describe('UC-305 Maaltijd verwijderen', function () {
     beforeEach(function () {
         database.db = [];
     })
