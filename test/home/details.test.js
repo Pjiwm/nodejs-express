@@ -1,19 +1,16 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const database = require('../../src/dao/home.database')
-
-const logger = require("../../src/helpers/log")
-
 const app = require("../../server")
 
 chai.use(chaiHttp)
 
 describe('UC-203 Details van studentenhuis', function () {
     beforeEach(function () {
-        database.db = [];
+        database.db = []
     })
 
     it('TC-203-1 Studentenhuis-ID bestaat niet', function () {

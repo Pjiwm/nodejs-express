@@ -1,5 +1,5 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -10,7 +10,7 @@ chai.use(chaiHttp)
 
 describe('UC-305 Maaltijd verwijderen', function () {
     beforeEach(function () {
-        database.db = [];
+        database.db = []
     })
 /*
 * No data is sent when deleting. Therefore test case: TC-305-1 Verplicht veld ontbreekt

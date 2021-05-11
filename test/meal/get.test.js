@@ -1,5 +1,5 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -10,7 +10,7 @@ chai.use(chaiHttp)
 
 describe('UC-303 Lijst van maaltijden opvragen', function () {
     beforeEach(function () {
-        database.db = [];
+        database.db = []
     })
 
     it('TC-304-1 Maaltijd bestaat niet', function () {

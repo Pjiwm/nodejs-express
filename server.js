@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
-const logger = require("./src/helpers/log");
-let database = require('./src/dao/home.database');
+const logger = require("./src/helpers/log")
+let database = require('./src/dao/home.database')
 const controller = require('./src/controllers/default.controller')
 const apiRoutes = require('./src/routes/api.routes')
 

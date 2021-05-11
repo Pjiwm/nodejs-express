@@ -1,5 +1,5 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -23,7 +23,7 @@ const fakeData = {
 
 describe('UC-204 Studentenhuis wijzigen', function () {
     beforeEach(function () {
-        database.db = [];
+        database.db = []
     })
 
     it('TC-204-1 Verplicht veld ontbreekt', function () {

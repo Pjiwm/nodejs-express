@@ -51,7 +51,7 @@ class Homes {
     // removes a home inside the home.database's DB. 
     remove({ params }, res, next) {
         logger.info('[HomesController]: remove')
-        const home = database.getHome(params.homeId);
+        const home = database.getHome(params.homeId)
         
 
         if (home.length) {
@@ -98,7 +98,7 @@ class Homes {
             })
         }
 
-        const newHome = database.updateHome(params.homeId, body);
+        const newHome = database.updateHome(params.homeId, body)
 
         if (newHome === undefined) {
 
@@ -158,7 +158,7 @@ class Homes {
     }
 
     seed({ params }, res) {
-        const totalRows = params.count ? params.count : 10000;
+        const totalRows = params.count ? params.count : 10000
 
         database.seed(totalRows)
 

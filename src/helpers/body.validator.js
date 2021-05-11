@@ -1,7 +1,7 @@
 module.exports = class BodyValidator {
     constructor(_types) {
-        this.types = _types;
-        this.errors = [];
+        this.types = _types
+        this.errors = []
     }
 
     validate(_body) {
@@ -10,7 +10,7 @@ module.exports = class BodyValidator {
             
             if (_body[key] === undefined) {
                 this.errors.push(`${key} is required`)
-                continue;
+                continue
             }
 
             if (this.types[key].toLowerCase() !== _body[key].constructor.name.toLowerCase()) {
@@ -18,6 +18,6 @@ module.exports = class BodyValidator {
             }
         }
 
-        return this.errors.length ? false : true;
+        return this.errors.length ? false : true
     }
 }

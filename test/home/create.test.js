@@ -1,15 +1,15 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const faker  = require('faker/locale/nl')
-const logger =  require("../../src/helpers/log")
-const app = require("../../server");
-const { random } = require("faker/locale/nl");
+const app = require("../../server")
+
 
 chai.use(chaiHttp)
-faker.seed(1236)
+// faker.seed(1236)
+faker.seed(129)
 const fakeData = {
     "name": faker.lorem.word(),
     "city": faker.address.city(),
@@ -84,8 +84,10 @@ describe('UC-201 Maak studentenhuis', function () {
             .post("/api/studenthome")
             .send(fakeData)
             .end(function (err, response) {
+                console.log(response.body)
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
+                
             })
     })
 
