@@ -16,14 +16,17 @@ let controller = {
         })
         logger.info('[DefaultController] endpointNotFound')
     },
-    
+
     showError(error, req, res, next) {
-        res.status(error.code).json({
+        const errorCode = error.code || 500
+        res.status(errorCode).json({
             ...error
         })
         logger.info('Errorhandler called!')
         logger.info(error)
+
     }
+
 }
 
 module.exports = controller

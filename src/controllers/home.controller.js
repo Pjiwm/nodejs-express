@@ -1,6 +1,7 @@
 const logger = require("../helpers/log")
 let database = require('../dao/home.database')
 const BodyValidator = require("../helpers/body.validator")
+const home = require("../services/home.service")
 
 const types = {
     name: "string",
@@ -8,86 +9,66 @@ const types = {
     phoneNumber: "string",
     zipcode: "string",
     street: "string",
-    streetNumber: "number"
+    streetNumber: "number",
+    userId: "number"
 }
 
-class Homes {
+class HomeController {
     // creates a home inside the home.database's DB.
-    create({ body }, res, next) {
+    async create({ body }, res, next) {
 
         logger.info('[HomesController]: create')
 
         const bodyValidator = new BodyValidator(types)
 
         if (!bodyValidator.validate(body)) {
-
             logger.info('[HomesController]: create failed')
             return next({
                 code: 400,
                 error: "Bad Request",
                 message: bodyValidator.errors
             })
-
         }
 
         logger.info('[HomesController]: create found all arguments for new home')
-        const createdHome = database.createHome(body)
-
-        if (createdHome === undefined) {
+        const homeWithZipcode = await home.findByPostalCode(body.zipcode)
+        if (homeWithZipcode.length) {
             logger.info('[HomesController]: create failed')
-            return next({ 
-                code: 400, 
-                message: "Invalid or duplicate data was given",
+            return next({
+                code: 400,
+                message: "Postalcode already exists",
                 error: "Bad Request"
             })
         }
 
-        logger.info('[HomesController]: create successful')
-        return res.send(createdHome)
-
-        // logger.debug('[HomesController] inserted data:', body)
+        const newHome = await home.create(body)
+        return res.send(newHome)
     }
 
     // removes a home inside the home.database's DB. 
-    remove({ params }, res, next) {
+    async remove({ params }, res, next) {
         logger.info('[HomesController]: remove')
-        const home = database.getHome(params.homeId)
-        
-
-        if (home.length) {
-
-            logger.info('[HomesController]: remove successful')
-            logger.debug('[HomesController]: removed home with ID:', params.homeId)
-            database.removeHome(params.homeId)
-            res.send({ message: "removal successful" })
-
-        } else {
-
-            next({ 
-                code: 404, 
+        const deletedHome = await home.findOne(params.homeId)
+        if (!deletedHome.length) {
+            logger.info('[HomesController]: remove failed')
+            return next({
+                code: 404,
                 message: "Home doesn't exist",
                 error: "Not Found"
             })
-            logger.info('[HomesController]: remove failed')
+
         }
+
+        await home.removeFromId(params.homeId)
+        logger.info('[HomesController]: remove successful')
+        logger.debug('[HomesController]: removed home with ID:', params.homeId)
+        res.send({ message: "removal successful" })
     }
 
     // updates a home inside the home.database's DB by replacing its own content with requested information.
-    update({ params, body }, res, next) {
-        logger.info('[HomesController]: update')
-        const home = database.getHome(params.homeId)
-
-        if (!home.length) {
-            logger.info('[HomesController]: update failed')
-            return next({ 
-                code: 404, 
-                error: "Home doesn't exist",
-                message: "Not Found"
-            })
-        }
-
-
+    async update({ params, body }, res, next) {
         const bodyValidator = new BodyValidator(types)
+        logger.info('[HomesController]: update')
 
         if (!bodyValidator.validate(body)) {
             logger.info('[HomesController]: update failed')
@@ -98,63 +79,66 @@ class Homes {
             })
         }
 
-        const newHome = database.updateHome(params.homeId, body)
-
-        if (newHome === undefined) {
-
-            logger.info('[HomesController]: update failed')
-            logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
-            return next({ 
-                code: 400, 
-                message: "Invalid or duplicate data was given",
-                error: "Bad Request"
+        const updatedHome = await home.findOne(params.homeId)
+        const homeWithZipcode = await home.findByPostalCode(body.zipcode)
+        if (!updatedHome.length) {
+            return next({
+                code: 404,
+                error: "Home doesn't exist",
+                message: "Not Found"
             })
-
         }
-        logger.info('[HomesController]: update succesful')
-        logger.debug('[HomesController]: updated home with ID:', params.homeId, 'from:', home, 'to:', body)
-        return res.send(newHome)
 
+        if (homeWithZipcode.length) {
+            if (params.homeId !== homeWithZipcode.id) {
+                logger.info('[HomesController]: update failed')
+                logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
+                return next({
+                    code: 400,
+                    message: "Postalcode already exists",
+                    error: "Bad Request"
+                })
+            }
+        }
+
+        logger.info('[HomesController]: update successful')
+        res.send(await home.update(params.homeId, body))
     }
 
     // finds a home based on the query data name and city.
-    findByQuery({ query }, res, next) {
+    async findByQuery({ query }, res, next) {
         logger.info('[HomesController]: findByQuery')
-
-        if (!Object.keys(query).length) {
-            logger.info('[HomesController]: findByQuery all')
-            return res.send(database.db)
+        let returnValue
+        if (query.name === undefined && query.city === undefined) {
+            returnValue = await home.findAll()
+        } else if (query.name === undefined) {
+            returnValue = await home.findByCity(query.city)
+        } else if (query.city === undefined) {
+            returnValue = await home.findByName(query.name)
+        } else {
+            returnValue = await home.findByNameAndCity(query)
         }
 
-        var queriedHomes = database.getHomeByNameAndCity(query.name, query.city)
-        if (!queriedHomes.length) {
-            return next({ 
-                code: 404, 
+        if (!returnValue.length) {
+            return next({
+                code: 404,
                 message: "No homes found",
-                error: "Bad Request"
+                error: "Not Found"
             })
         }
-
-        res.send(queriedHomes)
-        logger.info('[HomesController]: findByQuery found matching information with query')
-
+        res.send(returnValue)
     }
-    // displays a specific home that has been requested via its ID.
-    findOneById({ params }, res, next) {
-        logger.info('[HomesController]: findOneById')
-        const home = database.getHome(params.homeId)
 
-        if (!home.length) {
-            logger.info('[HomesController]: findOneById failed')
-            return next({ 
-                code: 404, 
+    async findOneById({ params }, res, next) {
+        const newHome = await home.findOne(params.homeId)
+        if (!newHome.length) {
+            return next({
+                code: 404,
                 message: `Home with id ${params.homeId} doesn't exist`,
                 error: "Not Found"
             })
         }
-
-        logger.info('[HomesController]: findOneById successful')
-        res.send(home)
+        return res.send(newHome)
     }
 
     seed({ params }, res) {
@@ -163,9 +147,9 @@ class Homes {
         database.seed(totalRows)
 
         res.send({
-            message: "dummydata has been added",
+            message: "M'n zaad is gestrooid",
             results: database.db
         })
     }
 }
-module.exports = Homes
+module.exports = new HomeController()

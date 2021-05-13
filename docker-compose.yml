@@ -3,9 +3,30 @@ services:
     node:
         build: .
         # command: npm install tracer
-        command: npm start
+        command: npm run dev
         volumes: 
             - .:/usr/src/app
         ports: 
             - 80:3000
             - 9229:9229
+        depends_on:
+            - 'mariadb'
+    mariadb:
+        container_name: samen_eten_mariadb
+        image: mariadb
+        cap_add: [SYS_NICE]
+        environment:
+            MYSQL_ROOT_PASSWORD: 1337
+        
+    phpmyadmin:
+        container_name: samen_eten_phpmyadmin
+        image: phpmyadmin
+        ports:
+            - 8080:80
+        depends_on:
+            - "mariadb"
+        cap_add: [SYS_NICE]
+        environment:
+            PMA_HOST: samen_eten_mariadb
+            PMA_PASSWORD: 1337
+            PMA_USER: root

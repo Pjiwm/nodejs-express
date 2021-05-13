@@ -1,17 +1,16 @@
 const express = require('express')
-const homesRouter = express.Router()
-const Homes = require('../controllers/home.controller')
-const mealsRoutes = require('./meals.routes')
+const homeRouter = express.Router()
+const homeController = require('../controllers/home.controller')
+const mealRoutes = require('./meals.routes')
 
-const homes = new Homes();
 // all routes for homes
-homesRouter.get('/seed/:count', homes.seed)
+homeRouter.get('/seed/:count', homeController.seed)
 
-homesRouter.post('/', homes.create)
-homesRouter.delete('/:homeId', homes.remove)
-homesRouter.put('/:homeId', homes.update)
-homesRouter.get('/:homeId', homes.findOneById)
-homesRouter.get('/', homes.findByQuery)
+homeRouter.put('/:homeId', homeController.update)
+homeRouter.post('/', homeController.create)
+homeRouter.delete('/:homeId', homeController.remove)
+homeRouter.get('/:homeId', homeController.findOneById)
+homeRouter.get('/', homeController.findByQuery)
 
 /*
 *  The reason Meal routes are here is because the all meal routes 
@@ -19,7 +18,7 @@ homesRouter.get('/', homes.findByQuery)
 *  This is because meals are always inside a studenthome.
 */ 
 
-homesRouter.use('/:homeId/meal', mealsRoutes);
+homeRouter.use('/:homeId/meal', mealRoutes)
 
 
-module.exports = homesRouter
+module.exports = homeRouter

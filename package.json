@@ -28,8 +28,9 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "faker": "^5.5.3",
+    "mysql2": "^2.2.5",
     "tracer": "^1.1.4",
-    "tracer-debug": "^1.7.1",
-    "faker": "^5.5.3"
+    "tracer-debug": "^1.7.1"
   }
 }

@@ -10,7 +10,7 @@ const types = {
     allergy: "string",
     ingredients: "Array"
 }
-class Meals {
+class MealController {
     // creates a meal inside the meal array of a home.
     create({ params, body }, res, next) {
         logger.info('[MealsController]: create')
@@ -123,4 +123,4 @@ class Meals {
     }
 }
 
-module.exports = Meals
+module.exports = new MealController()

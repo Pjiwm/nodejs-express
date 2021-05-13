@@ -1,12 +1,9 @@
 process.env.PORT = 3001
-process.env.NODE_ENV = "testing";
+process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const database = require('../../src/dao/home.database')
-
-const logger = require("../../src/helpers/log")
-
 const app = require("../../server")
 
 chai.use(chaiHttp)
@@ -22,7 +19,7 @@ const fakeData = {
 
 describe('UC-302 Maaltijd wijzigen', function () {
     beforeEach(function () {
-        database.db = [];
+        database.db = [] 
     })
 
     it('TC-302-1 Verplicht veld ontbreekt', function () {
@@ -66,11 +63,8 @@ describe('UC-302 Maaltijd wijzigen', function () {
             .end(function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
+                chai.expect(response.body.id).equal(1)
             })
     })
-
-
-
-
 
 })
