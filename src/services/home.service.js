@@ -1,5 +1,4 @@
 const database = require("./database.service")
-
 class Home {
     /**
      * @param {Object} home - The new home details
@@ -23,7 +22,6 @@ class Home {
                 home.phoneNumber,
                 home.city
             ])
-
         return await this.findOne(newHome.insertId)
     }
 
@@ -31,14 +29,11 @@ class Home {
      * @param {number} id - ID of the home
      */
     async findOne(id) {
-        const home = await database.execute("SELECT * FROM `studenthome` WHERE id = ?", [id])
-
-        return home
+        return await database.execute("SELECT * FROM `studenthome` WHERE id = ?", [id])
     }
 
     async findAll() {
         return await database.execute("SELECT * FROM `studenthome`")
-
     }
 
     /**
@@ -54,6 +49,7 @@ class Home {
             ])
         return homes
     }
+
     /**
      * @param {string} postalcode - The postalcode from a home
      */
@@ -66,7 +62,6 @@ class Home {
      */
     async findByCity(city) {
         return await database.execute("SELECT * FROM `studenthome` WHERE City = ?", [city])
-
     }
 
     /**
@@ -75,7 +70,6 @@ class Home {
     async findByName(name) {
         return await database.execute("SELECT * FROM `studenthome` WHERE Name = ?", [name])
     }
-
 
     /**
      * @param {number} id - The id of the home
@@ -100,23 +94,16 @@ class Home {
                 home.city,
                 id
             ])
-
-    
         return await this.findOne(id)
     }
-
-
-
+    
     /**
      * @param {number} id - ID of the home
      */
     async removeFromId(id) {
-        const home = await database.execute("DELETE FROM `studenthome` WHERE id = ?", [id])
+        await database.execute("DELETE FROM `meal` WHERE StudentHomeID",[id])
+        await database.execute("DELETE FROM `studenthome` WHERE id = ?", [id])
+        
     }
-
-
-
-
-
 }
 module.exports = new Home()

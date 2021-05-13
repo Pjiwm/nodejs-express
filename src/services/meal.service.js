@@ -1,48 +1,87 @@
 const database = require("./database.service")
 
-class meal {
+
+class Meal {
     /**
+     * @param {number} homeId - the id of the home the meal belongs to
+     * @param {string} meal.mealId - The ID of the new meal
      * @param {Object} meal - The new meal details
      * @param {string} meal.name - The name of the new meal
      * @param {string} meal.description - The description of the new meal
      * @param {string} meal.ingredients - The ingredients of the new meal
-     * @param {number} meal.allergy - The allergies of the new meal
-     * @param {string} meal.creationDate - The creation date of the new meal
-     * @param {string} meal.serveDate - The serve date of the new meal
-     * @param {string} meal.price - The price of the new meal
-     * @param {string} meal.userId - The UserID the id of the home owner 
-     * @param {string} meal.mealId - The ID of the new meal
-     * @param {string} meal.maxParticipants - The maximum amount of participants for the new meal
+     * @param {Array} meal.allergy - The allergies of the new meal
+     * @param {Date} meal.creationDate - The creation date of the new meal
+     * @param {Date} meal.serveDate - The serve date of the new meal
+     * @param {number} meal.price - The price of the new meal
+     * @param {number} meal.userId - The UserID the id of the home owner 
+     * @param {number} meal.maxParticipants - The maximum amount of participants for the new meal
      */
-    async create(meal) {
-        const newmeal = await database.execute(
-            `INSERT INTO 'meal' 
-                (
-                    'Name', 
-                    'Description', 
-                    'Ingredients', 
-                    'Allergies', 
-                    'CreatedOn', 
-                    'OfferedOn', 
-                    'Price',
-                    'UserID',
-                    'StudentmealID',
-                    'MaxParticipants'
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    async create(homeId, meal) {
+        await database.execute(
+            "INSERT INTO `meal` (`ID`, `Name`, `Description`, `Ingredients`, `Allergies`, `CreatedOn`, `OfferedOn`, `Price`, `UserID`, `StudenthomeID`, `MaxParticipants`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
+                meal.id,
                 meal.name,
                 meal.description,
-                meal.ingredients,
+                meal.ingredients.join(', '),
                 meal.allergy,
                 meal.creationDate,
                 meal.serveDate,
                 meal.price,
                 meal.userId,
-                meal.mealId,
+                homeId,
                 meal.maxParticipants
             ])
+        return await this.findOneByMealIdAndHomeId(meal.id, homeId);
+    }
 
-        return newmeal;
+    /**
+     * @param {number} mealId- The ID of the meal
+     * @param {number} homeId - the id of the home the meal belongs to
+     */
+    async findOneByMealIdAndHomeId(mealId, homeId) {
+        return await database.execute("SELECT * FROM `meal` WHERE ID = ? AND StudentHomeID = ?", [mealId, homeId])
+    }
+
+    /**
+     * @param {number} homeId - the id of the home the meal belongs to
+     */
+    async findByHomeId(homeId) {
+        return await database.execute("SELECT * FROM `meal` WHERE StudentHomeID = ?", [homeId])
+    }
+
+    /**
+ * @param {number} homeId - the id of the home the meal belongs to
+ * @param {string} meal.mealId - The ID of the new meal
+ * @param {Object} meal - The new meal details
+ * @param {string} meal.name - The name of the new meal
+ * @param {string} meal.description - The description of the new meal
+ * @param {string} meal.ingredients - The ingredients of the new meal
+ * @param {Array} meal.allergy - The allergies of the new meal
+ * @param {Date} meal.creationDate - The creation date of the new meal
+ * @param {Date} meal.serveDate - The serve date of the new meal
+ * @param {number} meal.price - The price of the new meal
+ * @param {number} meal.userId - The UserID the id of the home owner 
+ * @param {number} meal.maxParticipants - The maximum amount of participants for the new meal
+ */
+    async update(homeId, mealId, meal) {
+        await database.execute(
+            "UPDATE `meal` SET `Name` = ?, `Description` = ?, `Ingredients` = ?, `Allergies` = ?, `CreatedOn` = ?, `OfferedOn` = ?, `Price` = ?, `MaxParticipants` = ? WHERE StudentHomeID = ? AND ID = ?",
+            [
+                meal.name,
+                meal.description,
+                meal.ingredients.join(', '),
+                meal.allergy,
+                meal.creationDate,
+                meal.serveDate,
+                meal.price,
+                meal.maxParticipants,
+                homeId,
+                mealId
+                
+            ])
+        return await this.findOneByMealIdAndHomeId(mealId, homeId)
     }
 }
+module.exports = new Meal()
 

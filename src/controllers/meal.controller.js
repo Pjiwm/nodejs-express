@@ -1,24 +1,37 @@
 const logger = require("../helpers/log")
 let database = require('../dao/home.database')
 const BodyValidator = require("../helpers/body.validator")
-const types = {
+const meal = require("../services/meal.service")
+const home = require("../services/home.service")
+
+const createTypes = {
+    id: "number",
     name: "string",
     description: "string",
     creationDate: "string",
     serveDate: "string",
-    price: "string",
+    price: "number",
     allergy: "string",
-    ingredients: "Array"
+    ingredients: "Array",
+    maxParticipants: "number"
+}
+const updateTypes = {
+    name: "string",
+    description: "string",
+    creationDate: "string",
+    serveDate: "string",
+    price: "number",
+    allergy: "string",
+    ingredients: "Array",
+    maxParticipants: "number"
 }
 class MealController {
     // creates a meal inside the meal array of a home.
-    create({ params, body }, res, next) {
+    async create({ params, body }, res, next) {
         logger.info('[MealsController]: create')
-        const home = database.getHome(params.homeId)
-        const bodyValidator = new BodyValidator(types)
+        const bodyValidator = new BodyValidator(createTypes)
 
         if (!bodyValidator.validate(body)) {
-
             logger.info('[MealsController]: create failed')
             return next({
                 code: 400,
@@ -27,99 +40,118 @@ class MealController {
             })
         }
 
-        if (home.length) {
-
-            res.send(database.createMeal(params.homeId, body))
-            logger.info('[MealsController]: create successful')
-
-        } else {
-
-            next({ error: "Not Found", message: "Home doesn't exist", code: 404 })
+        let existingMeal = await meal.findOneByMealIdAndHomeId(body.id, params.homeId)
+        if (existingMeal.length) {
             logger.info('[MealsController]: create failed')
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: `meal with id: ${body.id} already exists`
+            })
         }
+
+        existingMeal = await meal.findByHomeId(params.homeId)
+        if (!existingMeal.length) {
+            logger.info('[MealsController]: create failed')
+            return next({
+                code: 404,
+                error: "Not Found",
+                message: `no meals with home id: ${params.homeId}`
+            })
+        }
+
+        res.send(await meal.create(params.homeId, body))
+        logger.info('[MealsController]: create successful')
     }
-    // displays all the meals that are inside a home.
-    findAll({ params }, res, next) {
+    // displays all meals inside a student home
+    async findAll({ params }, res, next) {
         logger.info('[MealsController]: findAll')
-        const home = database.getHome(params.homeId)[0]
-
-
-        if (home !== undefined) {
-
-            logger.debug('[MealsController]: findAll found meals:', home.meals)
-            res.send(home.meals)
-            logger.info('[MealsController]: findAll successful')
-
-        } else {
-
+        const mealHome = await home.findOne(params.homeId)
+        if (!mealHome.length) {
             logger.info('[MealsController]: findAll failed')
-            next({ error: "Not Found", message: "Meal(s) do not exit", code: 404 })
-
+            return next({ error: "Not Found", message: "home does not exit", code: 404 })
         }
+
+        logger.info('[MealsController]: findAll successful')
+        res.send(await meal.findByHomeId(params.homeId))
+
     }
-    // displays specified meal inside a home via an ID
-    findOne({ params }, res, next) {
+    // finds a specific meal inside a home
+    async findOne({ params }, res, next) {
         logger.info('[MealsController]: findOne')
-        const meal = database.getMeal(params.homeId, params.mealId)
-        logger.debug('[MealsController]: findOne meal:', meal)
-
-        if (meal.length) {
-
-            logger.info('[MealsController]: successful')
-            res.send(meal)
-
-        } else {
-
+        const mealHome = await home.findOne(params.homeId)
+        if (!mealHome.length) {
             logger.info('[MealsController]: findOne failed')
-            res.status(404).send({ error: "Not Found", message: "Meal does not exits", code: 404 })
+            return next({ error: "Not Found", message: "home does not exit", code: 404 })
         }
 
+        const detailMeal = await meal.findOneByMealIdAndHomeId(params.mealId, params.homeId)
+        if (!detailMeal.length) {
+            logger.info('[MealsController]: findOne failed')
+            return next({ error: "Not Found", message: "meal does not exit", code: 404 })
+        }
+
+        logger.info('[MealsController]: findOne successful')
+        res.send(...detailMeal)
     }
-    // removes a meal from a home via the ID 
+    // updates the meal from a home by replacing its own content with the requested information.
+    async update({ params, body }, res, next) {
+        logger.info('[MealsController]: update')
+
+        const bodyValidator = new BodyValidator(updateTypes)
+        if (!bodyValidator.validate(body)) {
+            logger.info('[MealsController]: update failed')
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: bodyValidator.errors
+            })
+        }
+
+        const mealHome = await home.findOne(params.homeId)
+        if (!mealHome.length) {
+            logger.info('[MealsController]: findOne failed')
+            return next({ error: "Not Found", message: "home does not exit", code: 404 })
+        }
+
+        const currentMeal = await meal.findOneByMealIdAndHomeId(params.mealId, params.homeId)
+        if (!currentMeal.length) {
+            logger.info('[MealsController]: findOne failed')
+            return next({ error: "Not Found", message: "meal does not exit", code: 404 })
+        }
+
+        if (currentMeal.id === params.mealId) {
+            logger.info('[MealsController]: findOne failed')
+            return next({ error: "Not Found", message: `meal with id: ${params.mealId} already exists`, code: 404 })
+        }
+
+        res.send(await meal.update(params.homeId, params.mealId, body))
+    }
+ 
     remove({ params }, res, next) {
         logger.info('[MealsController]: remove')
         const home = database.getHome(params.homeId)
-        
-        if(!home.length) {
+    
+        if (!home.length) {
             logger.info('[MealsController]: remove failed')
             return next({ error: "Not Found", message: "Home does not exist", code: 404 })
         }
 
+    
         const meal = database.getMeal(params.homeId, params.mealId)
         if (meal.length) {
             database.removeMeal(params.homeId, params.mealId)
             logger.info('[MealsController]: remove successful')
             return res.send({ message: "successfull" })
-
+    
         } else {
-
+    
             logger.info('[MealsController]: remove failed')
             logger.debug('[MealsController]: remove meal:', meal)
             return next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
-
+    
         }
-
-    }
-    // updates the meal from a home by replacing its own content with the requested information.
-    update({ params, body }, res, next) {
-        logger.info('[MealsController]: update')
-        const currentMeal = database.getMeal(params.homeId, params.mealId)
-
-        if (!currentMeal.length) {
-            logger.info('[MealsController]: update failed')
-            return next({ error: "Not Found", message: "Meal does not exist", code: 404 })
-        }
-
-            const bodyValidator = new BodyValidator(types)
-        if (!bodyValidator.validate(body)) {
-            logger.info('[MealsController]: create failed')
-            return next({
-                code: 400,
-                error: "Bad Request",
-                message: bodyValidator.errors
-            })
-        }
-        return res.send(database.updateMeal(params.homeId, params.mealId, { ...body, id: Number(params.mealId) }))
+    
     }
 }
 

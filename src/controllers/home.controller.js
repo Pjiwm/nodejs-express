@@ -147,7 +147,7 @@ class HomeController {
         database.seed(totalRows)
 
         res.send({
-            message: "M'n zaad is gestrooid",
+            message: "Dummydata created",
             results: database.db
         })
     }
