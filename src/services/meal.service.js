@@ -1,5 +1,5 @@
 const database = require("./database.service")
-
+const home = require("../services/home.service")
 
 class Meal {
     /**
@@ -17,10 +17,10 @@ class Meal {
      * @param {number} meal.maxParticipants - The maximum amount of participants for the new meal
      */
     async create(homeId, meal) {
-        await database.execute(
-            "INSERT INTO `meal` (`ID`, `Name`, `Description`, `Ingredients`, `Allergies`, `CreatedOn`, `OfferedOn`, `Price`, `UserID`, `StudenthomeID`, `MaxParticipants`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        const result =  await database.execute(
+            "INSERT INTO `meal` (`Name`, `Description`, `Ingredients`, `Allergies`, `CreatedOn`, `OfferedOn`, `Price`, `UserID`, `StudenthomeID`, `MaxParticipants`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
-                meal.id,
+                // meal.id,
                 meal.name,
                 meal.description,
                 meal.ingredients.join(', '),
@@ -32,7 +32,8 @@ class Meal {
                 homeId,
                 meal.maxParticipants
             ])
-        return await this.findOneByMealIdAndHomeId(meal.id, homeId);
+            
+        return await this.findOneByMealIdAndHomeId(result.insertId, homeId);
     }
 
     /**
@@ -81,6 +82,15 @@ class Meal {
                 
             ])
         return await this.findOneByMealIdAndHomeId(mealId, homeId)
+    }
+
+    /**
+     * @param {number} mealId- The ID of the meal
+     * @param {number} homeId - the id of the home the meal belongs to
+     */
+    async femoveFromMealIdAndHomeId(mealId, homeId) {
+        await database.execute("DELETE FROM `meal` WHERE id = ? AND StudentHomeID = ?", [mealId, homeId])
+        return home.findOne(homeId)
     }
 }
 module.exports = new Meal()

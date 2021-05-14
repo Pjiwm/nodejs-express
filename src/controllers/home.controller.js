@@ -12,7 +12,6 @@ const types = {
     streetNumber: "number",
     userId: "number"
 }
-
 class HomeController {
     // creates a home inside the home.database's DB.
     async create({ body }, res, next) {
@@ -30,18 +29,27 @@ class HomeController {
             })
         }
 
+        if(!bodyValidator.validateInfo(body.zipcode, body.phoneNumber)) {
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: "zipcode or phone number is incorrect"
+            })
+        }
+
         logger.info('[HomesController]: create found all arguments for new home')
-        const homeWithZipcode = await home.findByPostalCode(body.zipcode)
+        const homeWithZipcode = await home.findByPostalCodeAndStreetNumber(body.zipcode, body.streetNumber)
         if (homeWithZipcode.length) {
             logger.info('[HomesController]: create failed')
             return next({
                 code: 400,
-                message: "Postalcode already exists",
+                message: "Postalcode with street number already exists",
                 error: "Bad Request"
             })
         }
 
         const newHome = await home.create(body)
+        logger.info('[HomesController]: create successful')
         return res.send(newHome)
     }
 
@@ -56,7 +64,6 @@ class HomeController {
                 message: "Home doesn't exist",
                 error: "Not Found"
             })
-
         }
 
         await home.removeFromId(params.homeId)
@@ -79,9 +86,18 @@ class HomeController {
             })
         }
 
+        if(!bodyValidator.validateInfo(body.zipcode, body.phoneNumber)) {
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: "zipcode or phone number is incorrect"
+            })
+        }
+
         const updatedHome = await home.findOne(params.homeId)
-        const homeWithZipcode = await home.findByPostalCode(body.zipcode)
+        const homeWithZipcode = await home.findByPostalCodeAndStreetNumber(body.zipcode, body.streetNumber)
         if (!updatedHome.length) {
+            logger.info('[HomesController]: update failed')
             return next({
                 code: 404,
                 error: "Home doesn't exist",
@@ -95,7 +111,7 @@ class HomeController {
                 logger.debug('[HomesController]: update body:', body.name, body.city, body.phoneNumber, body.zipcode)
                 return next({
                     code: 400,
-                    message: "Postalcode already exists",
+                    message: "Postalcode with street number already exists",
                     error: "Bad Request"
                 })
             }
@@ -111,41 +127,48 @@ class HomeController {
         let returnValue
         if (query.name === undefined && query.city === undefined) {
             returnValue = await home.findAll()
+            logger.info('[HomesController]: findByQuery showing all, no query')
         } else if (query.name === undefined) {
+            logger.info('[HomesController]: findByQuery no name only city')
             returnValue = await home.findByCity(query.city)
         } else if (query.city === undefined) {
             returnValue = await home.findByName(query.name)
+            logger.info('[HomesController]: findByQuery no city only name')
         } else {
+            logger.info('[HomesController]: findByQuery find name and city')
             returnValue = await home.findByNameAndCity(query)
         }
 
         if (!returnValue.length) {
+            logger.info('[HomesController]: findByQuery failed')
             return next({
                 code: 404,
                 message: "No homes found",
                 error: "Not Found"
             })
         }
+        logger.info('[HomesController]: findByQuery successful')
         res.send(returnValue)
     }
 
     async findOneById({ params }, res, next) {
+        logger.info('[HomesController]: findOneById')
         const newHome = await home.findOne(params.homeId)
         if (!newHome.length) {
+            logger.info('[HomesController]: findOneById failed')
             return next({
                 code: 404,
                 message: `Home with id ${params.homeId} doesn't exist`,
                 error: "Not Found"
             })
         }
+        logger.info('[HomesController]: successful')
         return res.send(newHome)
     }
 
     seed({ params }, res) {
         const totalRows = params.count ? params.count : 10000
-
         database.seed(totalRows)
-
         res.send({
             message: "Dummydata created",
             results: database.db

@@ -20,4 +20,8 @@ module.exports = class BodyValidator {
 
         return this.errors.length ? false : true
     }
+
+    validateInfo(zipcode, phoneNumber) {
+        return /^[1-9][0-9]{3} ?[A-Z]{2}$/.test(zipcode) && phoneNumber.length === 10
+    }
 }

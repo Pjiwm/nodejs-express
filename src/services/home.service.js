@@ -53,8 +53,8 @@ class Home {
     /**
      * @param {string} postalcode - The postalcode from a home
      */
-    async findByPostalCode(postalCode) {
-        return await database.execute("SELECT * FROM `studenthome` WHERE Postal_Code = ?", [postalCode])
+    async findByPostalCodeAndStreetNumber(postalCode, streetNumber) {
+        return await database.execute("SELECT * FROM `studenthome` WHERE Postal_Code = ? AND House_Nr = ?", [postalCode, streetNumber])
     }
 
     /**
@@ -101,9 +101,8 @@ class Home {
      * @param {number} id - ID of the home
      */
     async removeFromId(id) {
-        await database.execute("DELETE FROM `meal` WHERE StudentHomeID",[id])
+        await database.execute("DELETE FROM `meal` WHERE StudentHomeID = ?",[id])
         await database.execute("DELETE FROM `studenthome` WHERE id = ?", [id])
-        
     }
 }
 module.exports = new Home()

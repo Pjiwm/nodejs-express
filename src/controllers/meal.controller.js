@@ -4,18 +4,8 @@ const BodyValidator = require("../helpers/body.validator")
 const meal = require("../services/meal.service")
 const home = require("../services/home.service")
 
-const createTypes = {
-    id: "number",
-    name: "string",
-    description: "string",
-    creationDate: "string",
-    serveDate: "string",
-    price: "number",
-    allergy: "string",
-    ingredients: "Array",
-    maxParticipants: "number"
-}
-const updateTypes = {
+const types = {
+    // id: "number",
     name: "string",
     description: "string",
     creationDate: "string",
@@ -29,7 +19,7 @@ class MealController {
     // creates a meal inside the meal array of a home.
     async create({ params, body }, res, next) {
         logger.info('[MealsController]: create')
-        const bodyValidator = new BodyValidator(createTypes)
+        const bodyValidator = new BodyValidator(types)
 
         if (!bodyValidator.validate(body)) {
             logger.info('[MealsController]: create failed')
@@ -47,16 +37,6 @@ class MealController {
                 code: 400,
                 error: "Bad Request",
                 message: `meal with id: ${body.id} already exists`
-            })
-        }
-
-        existingMeal = await meal.findByHomeId(params.homeId)
-        if (!existingMeal.length) {
-            logger.info('[MealsController]: create failed')
-            return next({
-                code: 404,
-                error: "Not Found",
-                message: `no meals with home id: ${params.homeId}`
             })
         }
 
@@ -98,7 +78,7 @@ class MealController {
     async update({ params, body }, res, next) {
         logger.info('[MealsController]: update')
 
-        const bodyValidator = new BodyValidator(updateTypes)
+        const bodyValidator = new BodyValidator(types)
         if (!bodyValidator.validate(body)) {
             logger.info('[MealsController]: update failed')
             return next({
@@ -110,47 +90,65 @@ class MealController {
 
         const mealHome = await home.findOne(params.homeId)
         if (!mealHome.length) {
-            logger.info('[MealsController]: findOne failed')
+            logger.info('[MealsController]: update failed')
             return next({ error: "Not Found", message: "home does not exit", code: 404 })
         }
 
         const currentMeal = await meal.findOneByMealIdAndHomeId(params.mealId, params.homeId)
         if (!currentMeal.length) {
-            logger.info('[MealsController]: findOne failed')
-            return next({ error: "Not Found", message: "meal does not exit", code: 404 })
+            logger.info('[MealsController]: update failed')
+            return next({ error: "Not Found", message: "meal does not exist", code: 404 })
         }
 
         if (currentMeal.id === params.mealId) {
-            logger.info('[MealsController]: findOne failed')
+            logger.info('[MealsController]: update failed')
             return next({ error: "Not Found", message: `meal with id: ${params.mealId} already exists`, code: 404 })
         }
 
         res.send(await meal.update(params.homeId, params.mealId, body))
+        logger.info('[MealsController]: update successful')
     }
- 
-    remove({ params }, res, next) {
+    //  removes a meal form the home
+    async remove({ params }, res, next) {
         logger.info('[MealsController]: remove')
-        const home = database.getHome(params.homeId)
-    
-        if (!home.length) {
+
+        const mealHome = await home.findOne(params.homeId)
+        if (!mealHome.length) {
             logger.info('[MealsController]: remove failed')
-            return next({ error: "Not Found", message: "Home does not exist", code: 404 })
+            return next({ error: "Not Found", message: "home does not exit", code: 404 })
         }
 
-    
-        const meal = database.getMeal(params.homeId, params.mealId)
-        if (meal.length) {
-            database.removeMeal(params.homeId, params.mealId)
-            logger.info('[MealsController]: remove successful')
-            return res.send({ message: "successfull" })
-    
-        } else {
-    
+        const currentMeal = await meal.findOneByMealIdAndHomeId(params.mealId, params.homeId)
+        if (!currentMeal.length) {
             logger.info('[MealsController]: remove failed')
-            logger.debug('[MealsController]: remove meal:', meal)
-            return next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
-    
+            return next({ error: "Not Found", message: "meal does not exist", code: 404 })
         }
+
+        
+        res.send(await meal.femoveFromMealIdAndHomeId(params.mealId, params.homeId))
+        logger.info('[MealsController]: remove successful')
+
+        // const home = database.getHome(params.homeId)
+    
+        // if (!home.length) {
+        //     logger.info('[MealsController]: remove failed')
+        //     return next({ error: "Not Found", message: "Home does not exist", code: 404 })
+        // }
+
+    
+        // const meal = database.getMeal(params.homeId, params.mealId)
+        // if (meal.length) {
+        //     database.removeMeal(params.homeId, params.mealId)
+        //     logger.info('[MealsController]: remove successful')
+        //     return res.send({ message: "successfull" })
+    
+        // } else {
+    
+        //     logger.info('[MealsController]: remove failed')
+        //     logger.debug('[MealsController]: remove meal:', meal)
+        //     return next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
+    
+        // }
     
     }
 }
