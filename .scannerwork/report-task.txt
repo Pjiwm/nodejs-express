@@ -1,6 +1,0 @@
-projectKey=NodeJs-Server
-serverUrl=http://sonarqube.avans-informatica-breda.nl
-serverVersion=7.4.0.18908
-dashboardUrl=http://sonarqube.avans-informatica-breda.nl/dashboard?id=NodeJs-Server
-ceTaskId=AXlwza0XTNm1xigl99t-
-ceTaskUrl=http://sonarqube.avans-informatica-breda.nl/api/ce/task?id=AXlwza0XTNm1xigl99t-
