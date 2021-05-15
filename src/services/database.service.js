@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise')
+require('dotenv').config()
 
 class Database {
     constructor() {
@@ -7,11 +8,12 @@ class Database {
 
     connect() {
         console.log("hi")
+        console.log(process.env.DB_HOST)
         this._connection = mysql.createPool({
-            host: 'samen_eten_mariadb',
-            user: 'root',
-            database: 'studenthome',
-            password: '1337'
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            database: process.env.DB_DATABASE,
+            password: process.env.DB_PASSWORD
         })
     }
 

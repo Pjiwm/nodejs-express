@@ -127,28 +127,6 @@ class MealController {
         
         res.send(await meal.femoveFromMealIdAndHomeId(params.mealId, params.homeId))
         logger.info('[MealsController]: remove successful')
-
-        // const home = database.getHome(params.homeId)
-    
-        // if (!home.length) {
-        //     logger.info('[MealsController]: remove failed')
-        //     return next({ error: "Not Found", message: "Home does not exist", code: 404 })
-        // }
-
-    
-        // const meal = database.getMeal(params.homeId, params.mealId)
-        // if (meal.length) {
-        //     database.removeMeal(params.homeId, params.mealId)
-        //     logger.info('[MealsController]: remove successful')
-        //     return res.send({ message: "successfull" })
-    
-        // } else {
-    
-        //     logger.info('[MealsController]: remove failed')
-        //     logger.debug('[MealsController]: remove meal:', meal)
-        //     return next({ error: "Not Found", message: "Meal(s) do not exist", code: 404 })
-    
-        // }
     
     }
 }

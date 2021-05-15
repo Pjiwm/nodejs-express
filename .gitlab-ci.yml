@@ -35,7 +35,10 @@ testing:
     # - npm i mocha
     # - npm i tracer-debug
     - npm i tracer-debug
-    - npm run test
+    # - npm run test
+    - npm run coverage
+    - npm run sonar
+
   only:
     - master
 #

@@ -1,2 +1,4 @@
 /node_modules
-/MariaDB
+/.env
+/coverage
+/.nyc_output

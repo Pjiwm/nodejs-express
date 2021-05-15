@@ -9,6 +9,12 @@ services:
         ports: 
             - 80:3000
             - 9229:9229
+        env_file:
+             - .env
+        environment:
+            SONAR_LOGIN_KEY: ${SONAR_LOGIN_KEY}
+            SONAR_PROJECT_KEY: ${SONAR_PROJECT_KEY}
+            SONAR_SERVER_NAME: ${SONAR_SERVER_NAME}
         depends_on:
             - 'mariadb'
     mariadb:
