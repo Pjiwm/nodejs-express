@@ -5,7 +5,6 @@ const logger = require("./src/helpers/log")
 const database = require('./src/services/database.service')
 const controller = require('./src/controllers/default.controller')
 const apiRoutes = require('./src/routes/api.routes')
-require('dotenv').config()
 database.connect();
 
 app.use(express.json())
