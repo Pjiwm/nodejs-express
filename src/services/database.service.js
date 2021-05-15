@@ -1,3 +1,4 @@
+const logger = require("../helpers/log")
 const mysql = require('mysql2/promise')
 require('dotenv').config()
 
@@ -7,6 +8,7 @@ class Database {
     }
 
     connect() {
+        logger.info(`connecting to: ${process.env.DB_DATABASE}`)
         this._connection = mysql.createPool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,

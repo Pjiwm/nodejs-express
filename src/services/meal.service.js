@@ -1,5 +1,6 @@
 const database = require("./database.service")
 const home = require("../services/home.service")
+const logger = require("../helpers/log")
 
 class Meal {
     /**
@@ -32,7 +33,7 @@ class Meal {
                 homeId,
                 meal.maxParticipants
             ])
-            
+            logger.info(`[DB Meal] create`)
         return await this.findOneByMealIdAndHomeId(result.insertId, homeId);
     }
 
@@ -41,6 +42,7 @@ class Meal {
      * @param {number} homeId - the id of the home the meal belongs to
      */
     async findOneByMealIdAndHomeId(mealId, homeId) {
+        logger.info(`[DB Meal] findOneByMealIdAndHomeId`)
         return await database.execute("SELECT * FROM `meal` WHERE ID = ? AND StudentHomeID = ?", [mealId, homeId])
     }
 
@@ -48,6 +50,7 @@ class Meal {
      * @param {number} homeId - the id of the home the meal belongs to
      */
     async findByHomeId(homeId) {
+        logger.info(`[DB Meal] findByHomeId`)
         return await database.execute("SELECT * FROM `meal` WHERE StudentHomeID = ?", [homeId])
     }
 
@@ -81,6 +84,7 @@ class Meal {
                 mealId
                 
             ])
+            logger.info(`[DB Meal] update`)
         return await this.findOneByMealIdAndHomeId(mealId, homeId)
     }
 
@@ -90,6 +94,7 @@ class Meal {
      */
     async femoveFromMealIdAndHomeId(mealId, homeId) {
         await database.execute("DELETE FROM `meal` WHERE id = ? AND StudentHomeID = ?", [mealId, homeId])
+        logger.info(`[DB Meal] femoveFromMealIdAndHomeId`)
         return home.findOne(homeId)
     }
 }

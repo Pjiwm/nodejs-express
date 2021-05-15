@@ -1,4 +1,5 @@
 const database = require("./database.service")
+const logger = require("../helpers/log")
 class Home {
     /**
      * @param {Object} home - The new home details
@@ -22,6 +23,7 @@ class Home {
                 home.phoneNumber,
                 home.city
             ])
+            logger.info(`[DB Home] create`)
         return await this.findOne(newHome.insertId)
     }
 
@@ -29,10 +31,12 @@ class Home {
      * @param {number} id - ID of the home
      */
     async findOne(id) {
+        logger.info(`[DB Home] findOne`)
         return await database.execute("SELECT * FROM `studenthome` WHERE id = ?", [id])
     }
 
     async findAll() {
+        logger.info(`[DB Home] findAll`)
         return await database.execute("SELECT * FROM `studenthome`")
     }
 
@@ -47,6 +51,7 @@ class Home {
                 query.city,
                 query.name
             ])
+        logger.info(`[DB Home] findByNameAndCity`)
         return homes
     }
 
@@ -54,6 +59,7 @@ class Home {
      * @param {string} postalcode - The postalcode from a home
      */
     async findByPostalCodeAndStreetNumber(postalCode, streetNumber) {
+        logger.info(`[DB Home] findByPostalCodeAndStreetNumber`)
         return await database.execute("SELECT * FROM `studenthome` WHERE Postal_Code = ? AND House_Nr = ?", [postalCode, streetNumber])
     }
 
@@ -61,6 +67,7 @@ class Home {
      * @param {string} city - The city given with the url
      */
     async findByCity(city) {
+        logger.info(`[DB Home] findByCity`)
         return await database.execute("SELECT * FROM `studenthome` WHERE City = ?", [city])
     }
 
@@ -68,6 +75,7 @@ class Home {
      * @param {string} name - the name to look for within the url
      */
     async findByName(name) {
+        logger.info(`[DB Home] findByName`)
         return await database.execute("SELECT * FROM `studenthome` WHERE Name = ?", [name])
     }
 
@@ -94,6 +102,7 @@ class Home {
                 home.city,
                 id
             ])
+        logger.info(`[DB Home] update`)
         return await this.findOne(id)
     }
     
@@ -101,6 +110,7 @@ class Home {
      * @param {number} id - ID of the home
      */
     async removeFromId(id) {
+        logger.info(`[DB Home] removeFromId`)
         await database.execute("DELETE FROM `meal` WHERE StudentHomeID = ?",[id])
         await database.execute("DELETE FROM `studenthome` WHERE id = ?", [id])
     }
