@@ -2,7 +2,8 @@ const express = require('express')
 const mealRoutes = express.Router({ mergeParams: true })
 const mealController = require('../controllers/meal.controller')
 
-// all routes for meals
+// all routes for user
+
 mealRoutes.put('/:mealId', mealController.update)
 mealRoutes.post('/', mealController.create)
 mealRoutes.get('/', mealController.findAll)

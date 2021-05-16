@@ -2,7 +2,7 @@ const database = require("./database.service")
 const logger = require("../helpers/log")
 class Home {
     /**
-     * @param {Object} home - The new home details
+     * @param {Object} home - uThe new home details
      * @param {string} home.name - The name of the new home
      * @param {string} home.street - The street address of the new home
      * @param {string} home.streetNumber - The streetNumber of the new house

@@ -25,6 +25,18 @@ let controller = {
         logger.info('Errorhandler called!')
         logger.info(error)
 
+    },
+
+        getInfo(req, res) {
+        logger.info('[AuthenticationController]: getInfo')
+        const student = {
+            naam: "Pim Munne",
+            studentnummer: "2170811",
+            opleiding: "informatica",
+            bescrhijving: "dit is een nodejs server voor samen eten",
+            SonarQube: null,
+        }
+        res.send(student)
     }
 
 }

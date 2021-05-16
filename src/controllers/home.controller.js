@@ -29,14 +29,6 @@ class HomeController {
             })
         }
 
-        if(!bodyValidator.validateInfo(body.zipcode, body.phoneNumber)) {
-            return next({
-                code: 400,
-                error: "Bad Request",
-                message: "zipcode or phone number is incorrect"
-            })
-        }
-
         logger.info('[HomesController]: create found all arguments for new home')
         const homeWithZipcode = await home.findByPostalCodeAndStreetNumber(body.zipcode, body.streetNumber)
         if (homeWithZipcode.length) {
@@ -80,19 +72,12 @@ class HomeController {
         if (!bodyValidator.validate(body)) {
             logger.info('[HomesController]: update failed')
             return next({
-                code: 404,
+                code: 400,
                 error: "Bad Request",
                 message: bodyValidator.errors
             })
         }
 
-        if(!bodyValidator.validateInfo(body.zipcode, body.phoneNumber)) {
-            return next({
-                code: 400,
-                error: "Bad Request",
-                message: "zipcode or phone number is incorrect"
-            })
-        }
 
         const updatedHome = await home.findOne(params.homeId)
         const homeWithZipcode = await home.findByPostalCodeAndStreetNumber(body.zipcode, body.streetNumber)
@@ -121,7 +106,7 @@ class HomeController {
         res.send(await home.update(params.homeId, body))
     }
 
-    // finds a home based on the query data name and city.
+    // finds a home based on the query data name and city
     async findByQuery({ query }, res, next) {
         logger.info('[HomesController]: findByQuery')
         let returnValue

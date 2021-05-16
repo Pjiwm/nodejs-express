@@ -1,6 +1,6 @@
 const logger = require("../helpers/log")
 let database = require('../dao/home.database')
-const BodyValidator = require("../helpers/body.validator")
+const  BodyValidator = require("../helpers/body.validator")
 const meal = require("../services/meal.service")
 const home = require("../services/home.service")
 
@@ -8,15 +8,15 @@ const types = {
     // id: "number",
     name: "string",
     description: "string",
-    creationDate: "string",
-    serveDate: "string",
+    creationDate: "date",
+    serveDate: "date",
     price: "number",
     allergy: "string",
     ingredients: "Array",
     maxParticipants: "number"
 }
 class MealController {
-    // creates a meal inside the meal array of a home.
+    // creates a meal inside the meal array of a home
     async create({ params, body }, res, next) {
         logger.info('[MealsController]: create')
         const bodyValidator = new BodyValidator(types)
@@ -27,14 +27,6 @@ class MealController {
                 code: 400,
                 error: "Bad Request",
                 message: bodyValidator.errors
-            })
-        }
-
-        if(!bodyValidator.vakudateDateTime(body.creationDate, body.serveDate)) {
-            return next({
-                code: 400,
-                error: "Bad Request",
-                message: "dates should be in the following format: yyyy-mm-dd hh:mm:ss"
             })
         }
 
@@ -82,7 +74,9 @@ class MealController {
         logger.info('[MealsController]: findOne successful')
         res.send(...detailMeal)
     }
-    // updates the meal from a home by replacing its own content with the requested information.
+    /**
+     * @description updates the meal from a home by replacing its own content with the requested information.
+     */
     async update({ params, body }, res, next) {
         logger.info('[MealsController]: update')
 
@@ -93,14 +87,6 @@ class MealController {
                 code: 400,
                 error: "Bad Request",
                 message: bodyValidator.errors
-            })
-        }
-
-        if (!bodyValidator.vakudateDateTime(body.creationDate, body.serveDate)) {
-            return next({
-                code: 400,
-                error: "Bad Request",
-                message: "dates should be in the following format: yyyy-mm-dd hh:mm:ss"
             })
         }
 
@@ -140,10 +126,10 @@ class MealController {
             return next({ error: "Not Found", message: "meal does not exist", code: 404 })
         }
 
-        
+
         res.send(await meal.femoveFromMealIdAndHomeId(params.mealId, params.homeId))
         logger.info('[MealsController]: remove successful')
-    
+
     }
 }
 

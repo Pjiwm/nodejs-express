@@ -2,10 +2,22 @@
 const express = require('express')
 const apiRouter = express.Router()
 const homeRoutes = require('./home.routes')
-const Authentication = require('../controllers/authentication.controller')
-const authentication = new Authentication()
+const authRoutes = require('./auth.routes')
 
-apiRouter.get('/info', authentication.getInfo)
+function getInfo(req, res) {
+    const student = {
+        naam: "Pim Munne",
+        studentnummer: "2170811",
+        opleiding: "informatica",
+        bescrhijving: "dit is een nodejs server voor samen eten",
+        SonarQube: null,
+    }
+    res.send(student)
+}
+
+
+apiRouter.get('/info', getInfo)
 apiRouter.use('/studenthome', homeRoutes)
+apiRouter.use('/auth', authRoutes)
 
 module.exports = apiRouter

@@ -18,13 +18,11 @@ class Database {
     }
 
     async execute(query, stmts) {
-        // TODO sonar - remove fields
         const [rows, fields] = await this._connection.query(query, stmts)
         return rows
     }
 
     disconnect() {
-        // TODO sonar - this part is unused
         this._connection.end()
     }
 }
