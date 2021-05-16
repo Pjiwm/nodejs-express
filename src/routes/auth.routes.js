@@ -1,8 +1,10 @@
 const express = require('express')
-const userRouter = express.Router()
+const authRouter = express.Router()
 const userController = require('../controllers/user.controller')
+const authController = require('../controllers/auth.controller')
 
 // all routes for homes
-userRouter.post('/register', userController.create)
+authRouter.post('/register', userController.create)
+authRouter.post('/login', authController.login)
 
-module.exports = userRouter
+module.exports = authRouter

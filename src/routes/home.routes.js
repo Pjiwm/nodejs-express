@@ -2,13 +2,14 @@ const express = require('express')
 const homeRouter = express.Router()
 const homeController = require('../controllers/home.controller')
 const mealRoutes = require('./meals.routes')
+const jwtMiddleware = require('../helpers/jwt.verify.js')
+
 
 // all routes for homes
 homeRouter.get('/seed/:count', homeController.seed)
-
-homeRouter.put('/:homeId', homeController.update)
-homeRouter.post('/', homeController.create)
-homeRouter.delete('/:homeId', homeController.remove)
+homeRouter.put('/:homeId', jwtMiddleware, homeController.update)
+homeRouter.post('/', jwtMiddleware, homeController.create)
+homeRouter.delete('/:homeId', jwtMiddleware, homeController.remove)
 homeRouter.get('/:homeId', homeController.findOneById)
 homeRouter.get('/', homeController.findByQuery)
 

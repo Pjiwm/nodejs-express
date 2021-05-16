@@ -1,6 +1,6 @@
 const logger = require("../helpers/log")
 
-class Authentication {
+class AuthController {
     getInfo(req, res) {
         logger.info('[AuthenticationController]: getInfo')
         const student = {
@@ -14,5 +14,5 @@ class Authentication {
     }
 }
 
-module.exports = Authentication
+module.exports = new Auth()
 

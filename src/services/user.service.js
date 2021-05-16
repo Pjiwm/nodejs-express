@@ -33,7 +33,9 @@ class User {
 
     async findByEmail(email) {
         return await database.execute("SELECT * FROM `user` WHERE Email = ?", [email])
+        
     }
+
 }
 
 module.exports = new User()
