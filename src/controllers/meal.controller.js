@@ -30,6 +30,14 @@ class MealController {
             })
         }
 
+        if(!bodyValidator.vakudateDateTime(body.creationDate, body.serveDate)) {
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: "dates should be in the following format: yyyy-mm-dd hh:mm:ss"
+            })
+        }
+
         let existingMeal = await meal.findOneByMealIdAndHomeId(body.id, params.homeId)
         if (existingMeal.length) {
             logger.info('[MealsController]: create failed')
@@ -85,6 +93,14 @@ class MealController {
                 code: 400,
                 error: "Bad Request",
                 message: bodyValidator.errors
+            })
+        }
+
+        if (!bodyValidator.vakudateDateTime(body.creationDate, body.serveDate)) {
+            return next({
+                code: 400,
+                error: "Bad Request",
+                message: "dates should be in the following format: yyyy-mm-dd hh:mm:ss"
             })
         }
 
