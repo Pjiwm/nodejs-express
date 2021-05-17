@@ -17,7 +17,8 @@ const types = {
 }
 class MealController {
     // creates a meal inside the meal array of a home
-    async create({ params, body }, res, next) {
+    async create({ params, body, user }, res, next) {
+        body.userId = user
         logger.info('[MealsController]: create')
         const bodyValidator = new BodyValidator(types)
 
@@ -77,7 +78,8 @@ class MealController {
     /**
      * @description updates the meal from a home by replacing its own content with the requested information.
      */
-    async update({ params, body }, res, next) {
+    async update({ params, body, user }, res, next) {
+        body.userId = user
         logger.info('[MealsController]: update')
 
         const bodyValidator = new BodyValidator(types)
@@ -106,12 +108,21 @@ class MealController {
             logger.info('[MealsController]: update failed')
             return next({ error: "Not Found", message: `meal with id: ${params.mealId} already exists`, code: 404 })
         }
+        
+        if (body.userId != currentMeal[0].UserID) {
+            return next({
+                code: 401,
+                message: "Unauthorized",
+                error: "You do not have permission over this meal"
+            })
+        }
 
         res.send(await meal.update(params.homeId, params.mealId, body))
         logger.info('[MealsController]: update successful')
     }
     //  removes a meal form the home
-    async remove({ params }, res, next) {
+    async remove({ params, user }, res, next) {
+        const userId = user
         logger.info('[MealsController]: remove')
 
         const mealHome = await home.findOne(params.homeId)
@@ -124,6 +135,13 @@ class MealController {
         if (!currentMeal.length) {
             logger.info('[MealsController]: remove failed')
             return next({ error: "Not Found", message: "meal does not exist", code: 404 })
+        }
+        if (userId != currentMeal[0].UserID) {
+            return next({
+                code: 401,
+                message: "Unauthorized",
+                error: "You do not have permission over this meal"
+            })
         }
 
 

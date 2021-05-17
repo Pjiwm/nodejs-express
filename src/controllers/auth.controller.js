@@ -56,7 +56,7 @@ class AuthController {
 
         logger.info('[AuthController]: login successful')
         const secret = process.env.JWT_SECRET
-        const token = jwt.sign(loginUser[0].Email, secret)
+        const token = jwt.sign(loginUser[0].ID, secret)
         res.send({token})
     }
 }

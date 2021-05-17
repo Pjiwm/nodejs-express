@@ -10,12 +10,12 @@ const types = {
     zipcode: "string",
     street: "string",
     streetNumber: "number",
-    userId: "number"
 }
 class HomeController {
     // creates a home inside the home.database's DB.
-    async create({ body }, res, next) {
-
+    async create({ body, user  }, res, next) {
+        body.userId = user
+        console.log(body)
         logger.info('[HomesController]: create')
 
         const bodyValidator = new BodyValidator(types)
@@ -41,12 +41,16 @@ class HomeController {
         }
 
         const newHome = await home.create(body)
+        if(body.userId)
+
+
         logger.info('[HomesController]: create successful')
         return res.send(newHome)
     }
 
     // removes a home inside the home.database's DB. 
-    async remove({ params }, res, next) {
+    async remove({ params, user }, res, next) {
+        const userId = user
         logger.info('[HomesController]: remove')
         const deletedHome = await home.findOne(params.homeId)
         if (!deletedHome.length) {
@@ -57,7 +61,14 @@ class HomeController {
                 error: "Not Found"
             })
         }
-
+        
+        if(userId != deletedHome[0].UserID) {
+            return next({
+                code: 401,
+                message: "Unauthorized",
+                error: "You do not have permission over this home"
+            })
+        }
         await home.removeFromId(params.homeId)
         logger.info('[HomesController]: remove successful')
         logger.debug('[HomesController]: removed home with ID:', params.homeId)
@@ -65,7 +76,8 @@ class HomeController {
     }
 
     // updates a home inside the home.database's DB by replacing its own content with requested information.
-    async update({ params, body }, res, next) {
+    async update({ params, body, user  }, res, next) {
+        body.userId = user
         const bodyValidator = new BodyValidator(types)
         logger.info('[HomesController]: update')
 
@@ -87,6 +99,14 @@ class HomeController {
                 code: 404,
                 error: "Home doesn't exist",
                 message: "Not Found"
+            })
+        }
+
+        if (body.userId != updatedHome[0].UserID) {
+            return next({
+                code: 401,
+                message: "Unauthorized",
+                error: "You do not have permission over this home"
             })
         }
 

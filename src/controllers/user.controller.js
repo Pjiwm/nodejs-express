@@ -1,6 +1,8 @@
 const logger = require("../helpers/log")
 const BodyValidator = require("../helpers/body.validator")
 const user = require("../services/user.service")
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 const types = {
     firstName: "string",
     lastName: "string",
@@ -33,8 +35,14 @@ class UserController {
             })
         }
 
+        const newUser = await user.create(body)
+        console.log(newUser[0])
+        console.log(newUser[0].ID)
+        const secret = process.env.JWT_SECRET
+        const token = jwt.sign(newUser[0].ID, secret)
+
         logger.info('[UserController]: create successful')
-         return res.send(await user.create(body))
+         return res.send({...newUser[0], token})
     }
 }
  module.exports = new UserController()

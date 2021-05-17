@@ -27,7 +27,7 @@ class User {
      * @param id - the id of a user
      */
     async findOne(id) {
-        return await database.execute("SELECT First_Name, Last_Name, Email, Student_Number FROM `user` WHERE ID = ?", [id])
+        return await database.execute("SELECT First_Name, Last_Name, Email, Student_Number, ID FROM `user` WHERE ID = ?", [id])
 
     }
 
