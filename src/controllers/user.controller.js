@@ -12,6 +12,9 @@ const types = {
 }
 
 class UserController {
+    /**
+     * @description creates a user and gives it an authentication token when successfully registered
+     */
     async create({body}, res, next) {
         logger.info('[UserController]: create')
         const bodyValidator = new BodyValidator(types)

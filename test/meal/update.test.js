@@ -3,8 +3,8 @@ process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
-const database = require('../../src/dao/home.database')
 const app = require("../../server")
+require('dotenv').config()
 
 chai.use(chaiHttp)
 const fakeData = {

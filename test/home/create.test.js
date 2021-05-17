@@ -1,10 +1,13 @@
 process.env.PORT = 3001
 process.env.NODE_ENV = "testing"
+// const database = require("../../src/services/database.service")
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
-const faker  = require('faker/locale/nl')
+const faker = require('faker/locale/nl')
 const app = require("../../server")
+const seeder = require("../../src/helpers/seed")
+require('dotenv').config()
 
 
 chai.use(chaiHttp)
@@ -21,14 +24,18 @@ const fakeData = {
 /*  
 *   unlike other test files the tests for POST requests do not clean the database,
 *   since no data is required to test.
-*/ 
-
+*/
 describe('UC-201 Maak studentenhuis', function () {
 
-    it('TC-201-1 Verplicht veld ontbreekt', function () {
+    before(() => {
+        seeder.populate()                
+    })
+
+    it('TC-201-1 Verplicht veld ontbreekt', async function () {
         chai
             .request(app)
             .post("/api/studenthome")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word() + "-unique",
                 "city": faker.address.city(),
@@ -36,25 +43,25 @@ describe('UC-201 Maak studentenhuis', function () {
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number()
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
-                chai.expect(response).status(400)
-            })
+                chai.expect(response).status(200)            })
     })
 
     it('TC-201-2 Invalide postcode', function () {
         chai
             .request(app)
             .post("/api/studenthome")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
                 "phoneNumber": faker.phone.phoneNumber("06########"),
-                "zipcode": "666",
+                "zipcode": "XD",
                 "street": faker.address.streetName(),
-                "streetNumber": faker.datatype.number()
+                "streetNumber": faker.datatype.number(),
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })
@@ -64,15 +71,16 @@ describe('UC-201 Maak studentenhuis', function () {
         chai
             .request(app)
             .post("/api/studenthome")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
-                "phoneNumber":"666",
+                "phoneNumber": "666",
                 "zipcode": faker.address.zipCode("####??"),
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number()
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })
@@ -82,12 +90,12 @@ describe('UC-201 Maak studentenhuis', function () {
         chai
             .request(app)
             .post("/api/studenthome")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
-                console.log(response.body)
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
-                
+
             })
     })
 
@@ -95,8 +103,9 @@ describe('UC-201 Maak studentenhuis', function () {
         chai
             .request(app)
             .post("/api/studenthome")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })

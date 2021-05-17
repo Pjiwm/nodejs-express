@@ -1,5 +1,4 @@
 const logger = require("../helpers/log")
-let database = require('../dao/home.database')
 const BodyValidator = require("../helpers/body.validator")
 const home = require("../services/home.service")
 
@@ -174,13 +173,13 @@ class HomeController {
         return res.send(newHome)
     }
     /**
-     * @description generates dummydata to fill up the project
+     * @description produceert zaad
      */
     seed({ params }, res) {
         const totalRows = params.count ? params.count : 10000
         database.seed(totalRows)
         res.send({
-            message: "Dummydata created",
+            message: "M'n zaad is gestrooid",
             results: database.db
         })
     }

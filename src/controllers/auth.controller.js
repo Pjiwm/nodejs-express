@@ -10,17 +10,6 @@ const loginTypes = {
 }
 
 class AuthController {
-    getInfo(req, res) {
-        logger.info('[AuthenticationController]: getInfo')
-        const student = {
-            naam: "Pim Munne",
-
-            opleiding: "informatica",
-            bescrhijving: "dit is een nodejs server voor samen eten",
-            SonarQube: null,
-        }
-        res.send(student)
-    }
 
     async login({ body }, res, next) {
         const bodyValidator = new BodyValidator(loginTypes)
@@ -34,7 +23,7 @@ class AuthController {
         }
 
         const loginUser = await user.findByEmail(body.email)
-        if (loginUser.Email) {
+        if (!loginUser.length) {
             logger.info('[AuthController]: login failed')
             return next({
                 code: 400,
@@ -43,7 +32,7 @@ class AuthController {
             })
         }
 
-        console.log(body.password, loginUser[0].Password)
+        console.log(loginUser)
         const match = await bcrypt.compare(body.password, loginUser[0].Password)
         if (match === false) {
             logger.info('[AuthController]: login failed')
@@ -55,8 +44,8 @@ class AuthController {
         }
 
         logger.info('[AuthController]: login successful')
-        const secret = process.env.JWT_SECRET
-        const token = jwt.sign(loginUser[0].ID, secret)
+
+        const token = jwt.sign(loginUser[0].ID, process.env.JWT_SECRET)
         res.send({token})
     }
 }

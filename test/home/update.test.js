@@ -3,9 +3,9 @@ process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
-const database = require('../../src/dao/home.database')
 const faker = require('faker/locale/nl')
-
+require('dotenv').config()
+const seeder = require("../../src/helpers/seed")
 const logger = require("../../src/helpers/log")
 
 const app = require("../../server")
@@ -22,15 +22,16 @@ const fakeData = {
 }
 
 describe('UC-204 Studentenhuis wijzigen', function () {
-    beforeEach(function () {
-        database.db = []
+    beforeEach(async function () {
+        await seeder.wipeData()
     })
 
-    it('TC-204-1 Verplicht veld ontbreekt', function () {
-        database.seed(1)
+    it('TC-204-1 Verplicht veld ontbreekt', async function () {
+        await seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
@@ -38,17 +39,18 @@ describe('UC-204 Studentenhuis wijzigen', function () {
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number()
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
     })
 
     it('TC-204-2 Invalide postcode', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
@@ -64,10 +66,11 @@ describe('UC-204 Studentenhuis wijzigen', function () {
     })
 
     it('TC-204-3 Invalide telefoonnummer', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
                 "city": faker.address.city(),
@@ -83,10 +86,11 @@ describe('UC-204 Studentenhuis wijzigen', function () {
     })
 
     it('TC-204-4 Studentenhuis bestaat niet', function () {
-        database.seed(1)
+        seeder.wipeData()
         chai
             .request(app)
             .put("/api/studenthome/2")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
             .end(function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
@@ -95,10 +99,11 @@ describe('UC-204 Studentenhuis wijzigen', function () {
     })
 
     it('TC-204-6 Studentenhuis succesvol gewijzigd', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
             .end(function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)

@@ -6,7 +6,8 @@ const jwtMiddleware = require('../helpers/jwt.verify.js')
 
 
 // all routes for homes
-homeRouter.get('/seed/:count', homeController.seed)
+// TODO fully remove seed function
+// homeRouter.get('/seed/:count', homeController.seed)
 homeRouter.put('/:homeId', jwtMiddleware, homeController.update)
 homeRouter.post('/', jwtMiddleware, homeController.create)
 homeRouter.delete('/:homeId', jwtMiddleware, homeController.remove)

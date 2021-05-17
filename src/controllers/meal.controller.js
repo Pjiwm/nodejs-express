@@ -1,11 +1,9 @@
 const logger = require("../helpers/log")
-let database = require('../dao/home.database')
-const  BodyValidator = require("../helpers/body.validator")
+const BodyValidator = require("../helpers/body.validator")
 const meal = require("../services/meal.service")
 const home = require("../services/home.service")
 
 const types = {
-    // id: "number",
     name: "string",
     description: "string",
     creationDate: "date",
@@ -16,7 +14,9 @@ const types = {
     maxParticipants: "number"
 }
 class MealController {
-    // creates a meal inside the meal array of a home
+    /**
+     *  @description creates a meal for a home
+     */
     async create({ params, body, user }, res, next) {
         body.userId = user
         logger.info('[MealsController]: create')
@@ -44,7 +44,9 @@ class MealController {
         res.send(await meal.create(params.homeId, body))
         logger.info('[MealsController]: create successful')
     }
-    // displays all meals inside a student home
+    /**
+     *  @description displays all meals inside a student home
+     */
     async findAll({ params }, res, next) {
         logger.info('[MealsController]: findAll')
         const mealHome = await home.findOne(params.homeId)
@@ -57,7 +59,10 @@ class MealController {
         res.send(await meal.findByHomeId(params.homeId))
 
     }
-    // finds a specific meal inside a home
+    /**
+     *  @description finds a specific meal inside a home
+     */
+
     async findOne({ params }, res, next) {
         logger.info('[MealsController]: findOne')
         const mealHome = await home.findOne(params.homeId)
@@ -75,7 +80,7 @@ class MealController {
         logger.info('[MealsController]: findOne successful')
         res.send(...detailMeal)
     }
-    /**
+    s/**
      * @description updates the meal from a home by replacing its own content with the requested information.
      */
     async update({ params, body, user }, res, next) {
@@ -108,7 +113,7 @@ class MealController {
             logger.info('[MealsController]: update failed')
             return next({ error: "Not Found", message: `meal with id: ${params.mealId} already exists`, code: 404 })
         }
-        
+
         if (body.userId != currentMeal[0].UserID) {
             return next({
                 code: 401,
@@ -120,7 +125,9 @@ class MealController {
         res.send(await meal.update(params.homeId, params.mealId, body))
         logger.info('[MealsController]: update successful')
     }
-    //  removes a meal form the home
+    /**
+     *  @description removes a meal form the home
+     */
     async remove({ params, user }, res, next) {
         const userId = user
         logger.info('[MealsController]: remove')
@@ -136,6 +143,7 @@ class MealController {
             logger.info('[MealsController]: remove failed')
             return next({ error: "Not Found", message: "meal does not exist", code: 404 })
         }
+
         if (userId != currentMeal[0].UserID) {
             return next({
                 code: 401,

@@ -9,7 +9,7 @@ module.exports = function (req, res, next) {
         req.user = jwt.decode(token)
         next()
     } catch (e) {
-        return res.send({
+        return res.status(401).send({
             code: 401,
             error: "Unauthorized ",
             message: "You are not signed in"

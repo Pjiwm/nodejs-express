@@ -5,7 +5,7 @@ class Home {
      * @param {Object} home - uThe new home details
      * @param {string} home.name - The name of the new home
      * @param {string} home.street - The street address of the new home
-     * @param {string} home.streetNumber - The streetNumber of the new house
+     * @param {number} home.streetNumber - The streetNumber of the new house
      * @param {number} home.userId - The UserID the id of the home owner
      * @param {string} home.zipcode - The zipcode of the new home
      * @param {string} home.phoneNumber - The phonenumber of the new home

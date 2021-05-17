@@ -4,21 +4,36 @@ process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
-const database = require('../../src/dao/home.database')
 const app = require("../../server")
+const seeder = require("../../src/helpers/seed")
+const home = require("../../src/services/home.service")
 
+const homeBody = {
+    name: "same-name",
+    street: "same-street",
+    streetNumber: 5,
+    userId: 1,
+    zipcode: "1234TT",
+    phoneNumber: "0612345678",
+    city: "same-city"
+}
+require('dotenv').config()
 chai.use(chaiHttp)
 
 describe('UC-202 Overzicht van studentenhuizen', function () {
-    beforeEach(function () {
-        database.db = []
+    beforeEach(async function () {
+        // await seeder.wipeData()
+        await home.create(homeBody)
+        await home.create({ ...homeBody, streetNumber: 7, zipcode: "4321BA"})
+
     })
 
-    it('TC-202-1 Toon nul studentenhuizen', function () {
+    it('TC-202-1 Toon nul studentenhuizen', async function () {
+        await seeder.wipeData()
         chai
             .request(app)
             .get("/api/studenthome")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response.body).length(0)
                 chai.expect(response).status(200)
@@ -26,23 +41,25 @@ describe('UC-202 Overzicht van studentenhuizen', function () {
     })
 
     it('TC-202-2 Toon twee studentenhuizen ', function () {
-        database.seed(2, { "city": "same-city" })
 
         chai
             .request(app)
             .get("/api/studenthome")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response.body).length(2)
                 chai.expect(response).status(200)
             })
     })
-
+// TODO werkt nog niet - console logt niks met async en zonder???
     it('TC-202-3 Toon studentenhuizen met zoekterm op niet-bestaande stad', function () {
+        
         chai
             .request(app)
-            .get("/api/studenthome?city=non-existing-city")
+            .get("/api/studenthome?city=non-existing-city-frefsdfdsfsf")
             .end(function (err, response) {
+                console.log(1)
+                console.log(response)
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
@@ -59,12 +76,11 @@ describe('UC-202 Overzicht van studentenhuizen', function () {
     })
 
     it('TC-202-5 Toon studentenhuizen met zoekterm op bestaande stad', function () {
-        database.seed(2, { "city": "same-city" })
 
         chai
             .request(app)
             .get("/api/studenthome?city=same-city")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
                 chai.expect(response.body.length).greaterThan(0)
@@ -76,7 +92,7 @@ describe('UC-202 Overzicht van studentenhuizen', function () {
         chai
             .request(app)
             .get("/api/studenthome?name=same-name")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
                 chai.expect(response.body.length).greaterThan(0)
