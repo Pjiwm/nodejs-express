@@ -12,10 +12,11 @@ const types = {
     streetNumber: "number",
 }
 class HomeController {
-    // creates a home inside the home.database's DB.
+    /**
+     * @description creates a home and assigns the logged in created as its home admin.
+     */
     async create({ body, user  }, res, next) {
         body.userId = user
-        console.log(body)
         logger.info('[HomesController]: create')
 
         const bodyValidator = new BodyValidator(types)
@@ -40,15 +41,12 @@ class HomeController {
             })
         }
 
-        const newHome = await home.create(body)
-        if(body.userId)
-
-
         logger.info('[HomesController]: create successful')
-        return res.send(newHome)
+        return res.send(await home.create(body))
     }
-
-    // removes a home inside the home.database's DB. 
+    /**
+     * @description removes a home from the database with all its meals
+     */
     async remove({ params, user }, res, next) {
         const userId = user
         logger.info('[HomesController]: remove')
@@ -75,7 +73,9 @@ class HomeController {
         res.send({ message: "removal successful" })
     }
 
-    // updates a home inside the home.database's DB by replacing its own content with requested information.
+    /**
+     * @description updates the current data of a home
+     */
     async update({ params, body, user  }, res, next) {
         body.userId = user
         const bodyValidator = new BodyValidator(types)
@@ -125,8 +125,9 @@ class HomeController {
         logger.info('[HomesController]: update successful')
         res.send(await home.update(params.homeId, body))
     }
-
-    // finds a home based on the query data name and city
+    /**
+     * @description finds a home based on the query data name and city
+     */
     async findByQuery({ query }, res, next) {
         logger.info('[HomesController]: findByQuery')
         let returnValue
@@ -155,7 +156,9 @@ class HomeController {
         logger.info('[HomesController]: findByQuery successful')
         res.send(returnValue)
     }
-
+    /**
+     * @description finds a specific home via the home's ID
+     */
     async findOneById({ params }, res, next) {
         logger.info('[HomesController]: findOneById')
         const newHome = await home.findOne(params.homeId)
@@ -170,7 +173,9 @@ class HomeController {
         logger.info('[HomesController]: successful')
         return res.send(newHome)
     }
-
+    /**
+     * @description generates dummydata to fill up the project
+     */
     seed({ params }, res) {
         const totalRows = params.count ? params.count : 10000
         database.seed(totalRows)
