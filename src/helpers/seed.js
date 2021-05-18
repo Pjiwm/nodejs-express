@@ -13,7 +13,7 @@ class Seed {
         this._addMasterUser()
         for(let i = 0; i < amount; i++) {
             let currentHome = await this._addHome()
-            await this._addmeal(currentHome.insertedID)
+            await this._addMeal(currentHome.ID)
         }
 
     }
@@ -29,7 +29,9 @@ class Seed {
             studentNumber: 10000,
             password: "password"
         }
+        try {
         await user.create(body)
+        } catch {}
     }
 
     /**
@@ -46,7 +48,7 @@ class Seed {
             phoneNumber: faker.phone.phoneNumber("06########"),
             city: faker.address.city()
         }
-        await home.create(body)
+        return await home.create(body)
 
     }
 
@@ -64,10 +66,9 @@ class Seed {
             serveDate: "2021-05-17 20:20:21",
             price: faker.datatype.number(),
             userId: 1,
-            homeId: homeId,
             maxParticipants: 5
         }
-        await meal.create(body)
+        return await meal.create(homeId, body)
 
     }
 

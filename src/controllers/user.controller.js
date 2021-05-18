@@ -39,8 +39,6 @@ class UserController {
         }
 
         const newUser = await user.create(body)
-        console.log(newUser[0])
-        console.log(newUser[0].ID)
         const secret = process.env.JWT_SECRET
         const token = jwt.sign(newUser[0].ID, secret)
 

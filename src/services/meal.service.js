@@ -31,7 +31,7 @@ class Meal {
                 meal.price,
                 meal.userId,
                 homeId,
-                meal.maxPartici
+                meal.maxParticipants
             ])
             logger.info(`[DB Meal] create`)
         return await this.findOneByMealIdAndHomeId(result.insertId, homeId);

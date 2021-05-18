@@ -26,11 +26,11 @@ describe('UC-204 Studentenhuis wijzigen', function () {
         await seeder.wipeData()
     })
 
-    it('TC-204-1 Verplicht veld ontbreekt', async function () {
-        await seeder.populate(5)
+    it('TC-204-1 Verplicht veld ontbreekt', function () {
+         seeder.populate(5)
         chai
             .request(app)
-            .put("/api/studenthome/1")
+            .put("/api/studenthome/2")
             .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": faker.lorem.word(),
@@ -59,7 +59,7 @@ describe('UC-204 Studentenhuis wijzigen', function () {
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number()
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })
@@ -79,7 +79,7 @@ describe('UC-204 Studentenhuis wijzigen', function () {
                 "street": faker.address.streetName(),
                 "streetNumber": faker.datatype.number()
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })
@@ -92,7 +92,7 @@ describe('UC-204 Studentenhuis wijzigen', function () {
             .put("/api/studenthome/2")
             .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
@@ -105,7 +105,7 @@ describe('UC-204 Studentenhuis wijzigen', function () {
             .put("/api/studenthome/1")
             .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
             })

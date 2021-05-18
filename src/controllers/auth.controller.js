@@ -32,7 +32,7 @@ class AuthController {
             })
         }
 
-        console.log(loginUser)
+    
         const match = await bcrypt.compare(body.password, loginUser[0].Password)
         if (match === false) {
             logger.info('[AuthController]: login failed')

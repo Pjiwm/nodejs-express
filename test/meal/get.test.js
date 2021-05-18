@@ -4,32 +4,34 @@ process.env.NODE_ENV = "testing"
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const app = require("../../server")
+const { seed } = require("../../src/controllers/home.controller")
+const seeder = require("../../src/helpers/seed")
 require('dotenv').config()
 
 chai.use(chaiHttp)
 
 describe('UC-303 Lijst van maaltijden opvragen', function () {
     beforeEach(function () {
-        database.db = []
+        seeder.wipeData()
     })
 
     it('TC-304-1 Maaltijd bestaat niet', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .get("/api/studenthome/1/meal/2")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
     })
 
     it('C-304-2 Details van maaltijd geretourneerd', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .get("/api/studenthome/1/meal/1")
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
             })

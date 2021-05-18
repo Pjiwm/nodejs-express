@@ -4,6 +4,7 @@ process.env.NODE_ENV = "testing"
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const app = require("../../server")
+const seeder = require("../../src/helpers/seed")
 require('dotenv').config()
 
 chai.use(chaiHttp)
@@ -19,14 +20,15 @@ const fakeData = {
 
 describe('UC-302 Maaltijd wijzigen', function () {
     beforeEach(function () {
-        database.db = [] 
+        seeder.wipeData() 
     })
 
     it('TC-302-1 Verplicht veld ontbreekt', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1/meal/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send({
                 "name": "frkandels",
                 "description": "snack",
@@ -36,31 +38,33 @@ describe('UC-302 Maaltijd wijzigen', function () {
                 "allergy": "contains curry",
                 "ingredients": ["meat", "curry"]
             })
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(400)
             })
     })
 
     it('TC-302-4 Maaltijd bestaat niet', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
-            .put("/api/studenthome/1/meal/2")
+            .put("/api/studenthome/1/meal/10")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(404)
             })
     })
 
     it('TC-302-5 Maaltijd succesvol gewijzigd ', function () {
-        database.seed(1)
+        seeder.populate(5)
         chai
             .request(app)
             .put("/api/studenthome/1/meal/1")
+            .set("Authentication", `Bearer ${process.env.JWT_TOKEN}`)
             .send(fakeData)
-            .end(function (err, response) {
+            .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
                 chai.expect(response).status(200)
                 chai.expect(response.body.id).equal(1)

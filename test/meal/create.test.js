@@ -3,19 +3,19 @@ process.env.NODE_ENV = "testing"
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
-const logger = require("../../src/helpers/log")
+const seeder = require("../../src/helpers/seed")
 const app = require("../../server")
 require('dotenv').config()
 
 chai.use(chaiHttp)
 
 describe('UC-301 Maaltijd aanmaken', function () {
-  beforeEach(function () {
-    database.db = []
+  beforeEach(async function () {
+    seeder.wipeData()
   })
 
   it('TC-301-1 Verplicht veld ontbreekt', function () {
-    database.seed(1)
+    seeder.populate(10)
     chai
       .request(app)
       .post("/api/studenthome/1/meal")
@@ -28,14 +28,14 @@ describe('UC-301 Maaltijd aanmaken', function () {
         "allergy": "contains curry",
         "ingredients": ["meat", "curry"]
       })
-      .end(function (err, response) {
+      .end(async function (err, response) {
         chai.expect(response).to.have.header('content-type', /json/)
         chai.expect(response).status(400)
       })
   })
 
   it('TC-301-3 Maaltijd succesvol toegevoegd ', function () {
-    database.seed(1)
+    seeder.populate(10)
     chai
       .request(app)
       .post("/api/studenthome/1/meal")
@@ -48,7 +48,7 @@ describe('UC-301 Maaltijd aanmaken', function () {
         "allergy": "contains curry",
         "ingredients": ["meat", "curry"]
       })
-      .end(function (err, response) {
+      .end(async function (err, response) {
         chai.expect(response).to.have.header('content-type', /json/)
         chai.expect(response).status(200)
       })
