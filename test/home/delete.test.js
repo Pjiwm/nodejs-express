@@ -26,8 +26,29 @@ describe('UC-204 Studentenhuis verwijderen', function () {
             })
     })
 
+    it('TC-205-2 Niet ingelogd', function () {
+        chai
+            .request(app)
+            .delete("/api/studenthome/2")
+            .end(async function (err, response) {
+                chai.expect(response).to.have.header('content-type', /json/)
+                chai.expect(response).status(401)
+            })
+    })
+
+    it('TC-205-3Actor is geen eigenaar', function () {
+        const jwtToken = 'eyJhbGciOiJIUzI1NiJ9.dGVzdEB0ZXN0LnRlc3Q.jMXOwi8NJYAwsxvktEcJ7R-GWGnWjM6V9EeJw9MtH68'
+        chai
+            .request(app)
+            .delete("/api/studenthome/1")
+            .set("Authentication", `Bearer ${jwtToken}`)
+            .end(async function (err, response) {
+                chai.expect(response).to.have.header('content-type', /json/)
+                chai.expect(response).status(200)
+            })
+    })
+
     it('TC-205-4 Studentenhuis succesvol verwijderd', function () {
-        // TODO zeer gers deze werkt alleen zonder await en async?
         chai
             .request(app)
             .delete("/api/studenthome/1")

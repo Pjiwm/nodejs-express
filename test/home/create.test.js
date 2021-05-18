@@ -31,6 +31,24 @@ describe('UC-201 Maak studentenhuis', function () {
         seeder.populate()                
     })
 
+    it('TC-201-5Niet ingelogd', async function () {
+        chai
+            .request(app)
+            .post("/api/studenthome")
+            .send({
+                "name": faker.lorem.word() + "-unique",
+                "city": faker.address.city(),
+                "zipcode": faker.address.zipCode("####??"),
+                "street": faker.address.streetName(),
+                "streetNumber": faker.datatype.number()
+            })
+            .end(async function (err, response) {
+                chai.expect(response).to.have.header('content-type', /json/)
+                chai.expect(response).status(200)
+            })
+    })
+
+
     it('TC-201-1 Verplicht veld ontbreekt', async function () {
         chai
             .request(app)
@@ -45,7 +63,7 @@ describe('UC-201 Maak studentenhuis', function () {
             })
             .end(async function (err, response) {
                 chai.expect(response).to.have.header('content-type', /json/)
-                chai.expect(response).status(200)            })
+                chai.expect(response).status(400)            })
     })
 
     it('TC-201-2 Invalide postcode', function () {

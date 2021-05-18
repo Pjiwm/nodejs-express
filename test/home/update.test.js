@@ -98,6 +98,18 @@ describe('UC-204 Studentenhuis wijzigen', function () {
             })
     })
 
+    it('TC-204-5 Niet ingelogd', function () {
+        seeder.populate(5)
+        chai
+            .request(app)
+            .put("/api/studenthome/1")
+            .send(fakeData)
+            .end(async function (err, response) {
+                chai.expect(response).to.have.header('content-type', /json/)
+                chai.expect(response).status(401)
+            })
+    })
+
     it('TC-204-6 Studentenhuis succesvol gewijzigd', function () {
         seeder.populate(5)
         chai
