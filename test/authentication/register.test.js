@@ -4,17 +4,7 @@ process.env.NODE_ENV = "testing"
 const chai = require("chai")
 const chaiHttp = require('chai-http')
 const app = require("../../server")
-const seeder = require("../../src/helpers/seed")
 require('dotenv').config()
-
-chai.use(chaiHttp)
-const fakeData = {
-    "firstName": "Adam",
-    "lastName": "the Tester",
-    "email": "adam@thetester.com",
-    "studentNumber": 10000,
-    "password": "password"
-}
 
 describe('UC-101 Registreren', function () {
 
