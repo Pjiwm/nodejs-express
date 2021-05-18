@@ -1,7 +1,5 @@
 const logger = require("../helpers/log")
 const mysql = require('mysql2/promise')
-const jwt = require('jsonwebtoken')
-const faker = require('faker/locale/nl')
 require('dotenv').config()
 
 class Database {

@@ -6,7 +6,6 @@ const chaiHttp = require('chai-http')
 const faker = require('faker/locale/nl')
 require('dotenv').config()
 const seeder = require("../../src/helpers/seed")
-const logger = require("../../src/helpers/log")
 
 const app = require("../../server")
 

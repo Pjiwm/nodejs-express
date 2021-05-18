@@ -1,6 +1,5 @@
 const logger = require("../helpers/log")
 
-
 let controller = {
     getAll(req, res, next) {
         const requestMethod = req.method

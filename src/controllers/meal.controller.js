@@ -40,7 +40,6 @@ class MealController {
                 message: `meal with id: ${body.id} already exists`
             })
         }
-
         res.send(await meal.create(params.homeId, body))
         logger.info('[MealsController]: create successful')
     }
@@ -80,7 +79,7 @@ class MealController {
         logger.info('[MealsController]: findOne successful')
         res.send(...detailMeal)
     }
-    s/**
+    /**
      * @description updates the meal from a home by replacing its own content with the requested information.
      */
     async update({ params, body, user }, res, next) {
@@ -151,7 +150,6 @@ class MealController {
                 error: "You do not have permission over this meal"
             })
         }
-
 
         res.send(await meal.femoveFromMealIdAndHomeId(params.mealId, params.homeId))
         logger.info('[MealsController]: remove successful')

@@ -1,6 +1,5 @@
 process.env.PORT = 3001
 process.env.NODE_ENV = "testing"
-// const database = require("../../src/services/database.service")
 
 const chai = require("chai")
 const chaiHttp = require('chai-http')
@@ -11,8 +10,8 @@ require('dotenv').config()
 
 
 chai.use(chaiHttp)
-// faker.seed(1236)
 faker.seed(129)
+
 const fakeData = {
     "name": faker.lorem.word(),
     "city": faker.address.city(),

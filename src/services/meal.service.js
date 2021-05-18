@@ -21,7 +21,6 @@ class Meal {
         const result =  await database.execute(
             "INSERT INTO `meal` (`Name`, `Description`, `Ingredients`, `Allergies`, `CreatedOn`, `OfferedOn`, `Price`, `UserID`, `StudenthomeID`, `MaxParticipants`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
-                // meal.id,
                 meal.name,
                 meal.description,
                 meal.ingredients.join(', '),
