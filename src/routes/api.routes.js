@@ -6,7 +6,7 @@ const authRoutes = require('./auth.routes')
 
 function getInfo(req, res) {
     const student = {
-        naam: "Pim Munne",
+        naam: "Pjiwm",
         studentnummer: "2170811",
         opleiding: "informatica",
         bescrhijving: "dit is een nodejs server voor samen eten",
